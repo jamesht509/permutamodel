@@ -1,0 +1,6 @@
+
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS push_notifications_enabled BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS private_mode BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS show_online_status BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS dark_mode BOOLEAN DEFAULT false;

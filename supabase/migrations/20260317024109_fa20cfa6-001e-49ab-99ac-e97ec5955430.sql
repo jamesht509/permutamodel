@@ -1,0 +1,11 @@
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS signup_ip text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS signup_country text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS signup_city text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS signup_region text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_known_country text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_known_city text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS device_type text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS browser text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS signup_source text;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS login_count integer DEFAULT 0;
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_login_at timestamptz;

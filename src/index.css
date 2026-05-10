@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 18% 95%;
+    --foreground: 30 10% 15%;
+
+    --card: 40 20% 99%;
+    --card-foreground: 30 10% 15%;
+
+    --popover: 40 20% 99%;
+    --popover-foreground: 30 10% 15%;
+
+    --primary: 37 55% 42%;
+    --primary-foreground: 40 20% 97%;
+
+    --secondary: 37 35% 82%;
+    --secondary-foreground: 30 10% 15%;
+
+    --muted: 37 15% 90%;
+    --muted-foreground: 30 8% 45%;
+
+    --accent: 37 55% 42%;
+    --accent-foreground: 40 20% 97%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 134 40% 38%;
+    --warning: 38 92% 50%;
+
+    --border: 37 25% 82%;
+    --input: 37 25% 82%;
+    --ring: 37 55% 42%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 40 20% 99%;
+    --sidebar-foreground: 30 10% 15%;
+    --sidebar-primary: 37 55% 42%;
+    --sidebar-primary-foreground: 40 20% 97%;
+    --sidebar-accent: 37 55% 42% / 0.1;
+    --sidebar-accent-foreground: 30 10% 15%;
+    --sidebar-border: 37 25% 82%;
+    --sidebar-ring: 37 55% 42%;
+  }
+
+  .dark {
+    --background: 240 7% 4%;
+    --foreground: 36 20% 93%;
+
+    --card: 240 7% 7%;
+    --card-foreground: 36 20% 93%;
+
+    --popover: 240 7% 7%;
+    --popover-foreground: 36 20% 93%;
+
+    --primary: 37 42% 60%;
+    --primary-foreground: 240 7% 4%;
+
+    --secondary: 37 30% 80%;
+    --secondary-foreground: 240 7% 4%;
+
+    --muted: 240 7% 9%;
+    --muted-foreground: 36 10% 53%;
+
+    --accent: 37 42% 60%;
+    --accent-foreground: 36 20% 93%;
+
+    --destructive: 0 65% 64%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 134 40% 50%;
+    --warning: 38 92% 50%;
+
+    --border: 37 30% 45% / 0.15;
+    --input: 37 30% 45% / 0.15;
+    --ring: 37 42% 60%;
+
+    --sidebar-background: 240 7% 7%;
+    --sidebar-foreground: 36 20% 93%;
+    --sidebar-primary: 37 42% 60%;
+    --sidebar-primary-foreground: 240 7% 4%;
+    --sidebar-accent: 37 42% 60% / 0.1;
+    --sidebar-accent-foreground: 36 20% 93%;
+    --sidebar-border: 37 30% 45% / 0.15;
+    --sidebar-ring: 37 42% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Prevent overscroll bounce in PWA standalone */
+    overscroll-behavior: none;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Prevent pull-to-refresh in PWA */
+    overscroll-behavior-y: contain;
+    /* Remove iOS tap highlight */
+    -webkit-tap-highlight-color: transparent;
+    /* Prevent text size adjust on orientation change */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  /* iOS INPUT ZOOM FIX: Safari zooms in when input font < 16px */
+  @media screen and (max-width: 768px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  /* PWA STANDALONE MODE: safe areas for status bar + home indicator */
+  @media all and (display-mode: standalone) {
+    #root {
+      /* Status bar space — black-translucent renders content behind it */
+      padding-top: env(safe-area-inset-top, 0);
+      min-height: 100dvh;
+    }
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  .safe-area-pl {
+    padding-left: env(safe-area-inset-left, 0);
+  }
+
+  .safe-area-pr {
+    padding-right: env(safe-area-inset-right, 0);
+  }
+
+  /* Full safe area shorthand */
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-left: env(safe-area-inset-left, 0);
+    padding-right: env(safe-area-inset-right, 0);
+  }
+
+  .gold-gradient {
+    background: linear-gradient(135deg, hsl(37 55% 42%), hsl(37 45% 55%));
+  }
+
+  .dark .gold-gradient {
+    background: linear-gradient(135deg, hsl(37 42% 60%), hsl(37 30% 80%));
+  }
+
+  .gold-text {
+    background: linear-gradient(135deg, hsl(37 55% 42%), hsl(37 45% 55%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dark .gold-text {
+    background: linear-gradient(135deg, hsl(37 42% 60%), hsl(37 30% 80%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Touch-friendly minimum sizes */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Custom scrollbar for dark editorial feel */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: hsl(37 30% 45% / 0.3);
+    border-radius: 3px;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: hsl(37 30% 45% / 0.5);
+  }
+
+  /* Gold text selection */
+  .dark ::selection {
+    background: hsl(37 42% 60% / 0.3);
+    color: hsl(36 20% 93%);
+  }
+
+  /* Card hover glow utility */
+  .card-glow {
+    transition: all 0.3s ease;
+  }
+  .card-glow:hover {
+    border-color: hsl(37 42% 60% / 0.3);
+    box-shadow: 0 8px 32px hsl(37 42% 60% / 0.08);
+  }
+
+  @keyframes float-particle {
+    0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+    25% { transform: translateY(-30px) translateX(10px); opacity: 0.8; }
+    50% { transform: translateY(-15px) translateX(-8px); opacity: 0.5; }
+    75% { transform: translateY(-40px) translateX(15px); opacity: 0.7; }
+  }
+
+  @keyframes scroll-x {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Grain overlay */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+    mix-blend-mode: multiply;
+  }
+}
