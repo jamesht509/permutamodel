@@ -29,6 +29,7 @@ export interface Strings {
     done: string;
     close: string;
     confirm: string;
+    cancel: string;
     delete: string;
     edit: string;
     save: string;
@@ -78,6 +79,66 @@ export interface Strings {
     passwordTooShort: string;
     passwordsDontMatch: string;
     nameRequired: string;
+    maxFileSize: (mb: number) => string;
+  };
+
+  // ── Profile completion checklist ─────────────────────────────────────
+  profileCompletion: {
+    title: string;
+    completeCta: string;
+    items: {
+      avatar: string;
+      bio: string;
+      location: string;
+      styles: string;
+      instagram: string;
+      photos: string;
+      availability: string;
+      equipment: string;
+    };
+  };
+
+  // ── Availability toggle ─────────────────────────────────────────────
+  availability: {
+    setAsAvailable: string;     // "Tô na ativa" + CTA framing
+    setAvailability: string;    // modal title
+    intro: string;
+    howLong: string;
+    today: string;
+    threeDays: string;
+    oneWeek: string;
+    detailsLabel: string;
+    detailsPlaceholder: string;
+    activate: string;
+    activating: string;
+    tapToDisable: string;
+    turnedOff: string;          // success toast
+    activated: string;          // success toast
+    updateFailed: string;       // error toast
+    activateFailed: string;     // error toast
+  };
+
+  // ── Achievement badges ──────────────────────────────────────────────
+  achievements: {
+    title: string;
+    types: Record<
+      | "first_session"
+      | "five_sessions"
+      | "ten_sessions"
+      | "first_review"
+      | "five_star"
+      | "top_rated"
+      | "verified"
+      | "popular",
+      { label: string; description: string }
+    >;
+  };
+
+  // ── ErrorBoundary fallback (class component renders this) ────────────
+  errorBoundary: {
+    title: string;
+    message: string;
+    refresh: string;
   };
 
   // ── Navigation & layout ─────────────────────────────────────────────
@@ -515,6 +576,7 @@ export const EN: Strings = {
     done: "Done",
     close: "Close",
     confirm: "Confirm",
+    cancel: "Cancel",
     delete: "Delete",
     edit: "Edit",
     save: "Save",
@@ -564,6 +626,57 @@ export const EN: Strings = {
     passwordTooShort: "Password must be at least 6 characters",
     passwordsDontMatch: "Passwords don't match",
     nameRequired: "Please enter your name",
+    maxFileSize: (mb) => `Max ${mb}MB`,
+  },
+  profileCompletion: {
+    title: "Profile Completion",
+    completeCta: "Complete your profile",
+    items: {
+      avatar: "Profile photo",
+      bio: "Bio",
+      location: "Location",
+      styles: "Styles",
+      instagram: "Instagram or website",
+      photos: "Portfolio photos",
+      availability: "Availability",
+      equipment: "Equipment or measurements",
+    },
+  },
+  availability: {
+    setAsAvailable: "Set as Available Now",
+    setAvailability: "Set Availability",
+    intro: "Let others know you're available for TFP shoots right now.",
+    howLong: "How long?",
+    today: "Today",
+    threeDays: "3 Days",
+    oneWeek: "1 Week",
+    detailsLabel: "Details (optional)",
+    detailsPlaceholder: "E.g., 'Free today 2-6pm in downtown Boston'",
+    activate: "Activate",
+    activating: "Activating...",
+    tapToDisable: "Tap to disable",
+    turnedOff: "Availability turned off",
+    activated: "You're now available! ⚡",
+    updateFailed: "Failed to update availability",
+    activateFailed: "Failed to activate availability",
+  },
+  achievements: {
+    title: "Achievements",
+    types: {
+      first_session: { label: "First Session", description: "Completed your first session" },
+      five_sessions: { label: "5 Sessions", description: "Completed 5 sessions" },
+      ten_sessions: { label: "10 Sessions", description: "Completed 10 sessions" },
+      first_review: { label: "First Review", description: "Received your first review" },
+      five_star: { label: "5-Star Rating", description: "Achieved a 5-star rating" },
+      top_rated: { label: "Top Rated", description: "Top rated in your area" },
+      verified: { label: "Verified", description: "Identity verified" },
+      popular: { label: "Popular", description: "Favorited by 10+ users" },
+    },
+  },
+  errorBoundary: {
+    title: "Something went wrong",
+    message: "An unexpected error occurred. Please try refreshing the page.",
+    refresh: "Refresh Page",
   },
   nav: {
     discover: "Discover",
@@ -957,6 +1070,7 @@ export const PT_BR: Strings = {
     done: "Pronto",
     close: "Fechar",
     confirm: "Confirmar",
+    cancel: "Cancelar",
     delete: "Apagar",
     edit: "Editar",
     save: "Salvar",
@@ -1006,6 +1120,57 @@ export const PT_BR: Strings = {
     passwordTooShort: "A senha precisa de pelo menos 6 caracteres",
     passwordsDontMatch: "As senhas não batem",
     nameRequired: "Coloca teu nome aí",
+    maxFileSize: (mb) => `Limite de ${mb}MB`,
+  },
+  profileCompletion: {
+    title: "Perfil completo",
+    completeCta: "Completar meu perfil",
+    items: {
+      avatar: "Foto de perfil",
+      bio: "Bio",
+      location: "Localização",
+      styles: "Estilos",
+      instagram: "Instagram ou site",
+      photos: "Fotos do book",
+      availability: "Disponibilidade",
+      equipment: "Equipamento ou medidas",
+    },
+  },
+  availability: {
+    setAsAvailable: "Ativar 'Tô na ativa'",
+    setAvailability: "Tô na ativa",
+    intro: "Avisa que tu tá disponível pra permuta agora.",
+    howLong: "Por quanto tempo?",
+    today: "Hoje",
+    threeDays: "3 dias",
+    oneWeek: "1 semana",
+    detailsLabel: "Detalhes (opcional)",
+    detailsPlaceholder: "Ex: 'Livre hoje, 14h-18h, zona oeste de SP'",
+    activate: "Ativar",
+    activating: "Ativando...",
+    tapToDisable: "Toca pra desligar",
+    turnedOff: "Saiu do 'Tô na ativa'",
+    activated: "Tu tá na ativa! ⚡",
+    updateFailed: "Não rolou atualizar a disponibilidade",
+    activateFailed: "Não rolou ativar a disponibilidade",
+  },
+  achievements: {
+    title: "Conquistas",
+    types: {
+      first_session: { label: "Primeiro ensaio", description: "Concluiu teu primeiro ensaio" },
+      five_sessions: { label: "5 ensaios", description: "Concluiu 5 ensaios" },
+      ten_sessions: { label: "10 ensaios", description: "Concluiu 10 ensaios" },
+      first_review: { label: "Primeiro recadinho", description: "Recebeu teu primeiro recadinho" },
+      five_star: { label: "Nota 5", description: "Alcançou avaliação 5 estrelas" },
+      top_rated: { label: "Top na área", description: "Top avaliado na tua região" },
+      verified: { label: "Verificado", description: "Identidade verificada" },
+      popular: { label: "Popular", description: "Salvo por 10+ pessoas" },
+    },
+  },
+  errorBoundary: {
+    title: "Deu ruim por aqui",
+    message: "Aconteceu um erro inesperado. Tenta recarregar a página.",
+    refresh: "Recarregar",
   },
   nav: {
     discover: "Início",

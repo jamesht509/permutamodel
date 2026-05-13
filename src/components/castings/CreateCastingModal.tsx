@@ -68,7 +68,7 @@ export default function CreateCastingModal({ open, onClose, onCreated }: Props) 
     if (!files || !user) return;
     setUploading(true);
     for (const file of Array.from(files).slice(0, 5 - moodboard.length)) {
-      if (file.size > 5 * 1024 * 1024) { toast.error("Max 5MB"); continue; }
+      if (file.size > 5 * 1024 * 1024) { toast.error(t.validation.maxFileSize(5)); continue; }
       const path = `${user.id}/${crypto.randomUUID()}.${file.name.split(".").pop()}`;
       const { error } = await supabase.storage.from("portfolios").upload(path, file);
       if (!error) {
