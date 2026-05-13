@@ -3,6 +3,7 @@ import { X, Check, XCircle, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 
 interface Application {
@@ -18,6 +19,7 @@ interface Props { castingId: string; onClose: () => void; onUpdate: () => void; 
 
 export default function ApplicationsModal({ castingId, onClose, onUpdate }: Props) {
   const { user } = useAuth();
+  const t = useTranslation();
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,9 +51,13 @@ export default function ApplicationsModal({ castingId, onClose, onUpdate }: Prop
     const { error } = await supabase.from("applications").update({ status: action }).eq("id", appId);
     if (error) { toast.error(error.message); return; }
 
+    // Cached title so both branches can pass it into the notif params.
+    let castingTitleForNotif: string | undefined;
+
     if (action === "accepted" && user) {
       // Get casting details for session creation
       const { data: casting } = await supabase.from("casting_calls").select("*").eq("id", castingId).single();
+      castingTitleForNotif = casting?.title;
       
       if (casting) {
         // Update filled_slots
@@ -88,12 +94,12 @@ export default function ApplicationsModal({ castingId, onClose, onUpdate }: Prop
           modelId = applicantId;
         }
 
-        // Auto-create session
+        // Auto-create session — location nullable; UI renders fallback.
         await supabase.from("sessions").insert({
           photographer_id: photographerId,
           model_id: modelId,
           date: casting.proposed_date || new Date().toISOString().split("T")[0],
-          location: casting.location || "Not specified",
+          location: casting.location || null,
           status: "confirmed" as const,
           request_id: null,
         });
@@ -110,23 +116,38 @@ export default function ApplicationsModal({ castingId, onClose, onUpdate }: Prop
         await supabase.from("conversations").insert({ user1_id: user.id, user2_id: applicantId });
       }
 
-      // Notify applicant
+      // Notify applicant — kind+params for localized render, legacy
+      // title/body kept as fallback.
+      const appAccepted = t.notifs.application_accepted({ castingTitle: castingTitleForNotif });
       await supabase.from("notifications").insert({
         user_id: applicantId,
         type: "application_accepted",
-        title: "Application Accepted! 🎉",
-        body: "Your casting application was accepted! A session has been created.",
+        kind: "application_accepted",
+        params: { castingTitle: castingTitleForNotif },
+        title: appAccepted.title,
+        body: appAccepted.body,
         data: { casting_id: castingId },
       });
 
       toast.success("Applicant accepted! Session created.");
     } else if (action === "declined") {
-      // Notify declined applicant
+      // Fetch casting title for the declined notif (no session created here)
+      if (!castingTitleForNotif) {
+        const { data: castingMeta } = await supabase
+          .from("casting_calls")
+          .select("title")
+          .eq("id", castingId)
+          .maybeSingle();
+        castingTitleForNotif = castingMeta?.title;
+      }
+      const appDeclined = t.notifs.application_declined({ castingTitle: castingTitleForNotif });
       await supabase.from("notifications").insert({
         user_id: applicantId,
         type: "application_declined",
-        title: "Application Update",
-        body: "Unfortunately, your casting application was not selected this time.",
+        kind: "application_declined",
+        params: { castingTitle: castingTitleForNotif },
+        title: appDeclined.title,
+        body: appDeclined.body,
         data: { casting_id: castingId },
       });
       toast.info("Application declined");

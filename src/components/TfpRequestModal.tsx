@@ -68,11 +68,15 @@ export default function TfpRequestModal({ open, onClose, receiverId, receiverNam
       });
       if (error) throw error;
 
+      const senderName = user.user_metadata?.name || "Someone";
+      const tfpNew = t.notifs.tfp_request_new({ name: senderName, title });
       await supabase.from("notifications").insert({
         user_id: receiverId,
         type: "tfp_request",
-        title: t.profile.sendRequest,
-        body: `${user.user_metadata?.name || "Someone"} — "${title}"`,
+        kind: "tfp_request_new",
+        params: { name: senderName, title },
+        title: tfpNew.title,
+        body: tfpNew.body,
         data: { sender_id: user.id },
       });
 

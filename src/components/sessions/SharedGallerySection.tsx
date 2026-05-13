@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ImagePlus, Images, ExternalLink, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 
 interface Props {
@@ -17,7 +18,8 @@ interface GalleryData {
 }
 
 export default function SharedGallerySection({ sessionId, photographerId, modelId }: Props) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const t = useTranslation();
   const [gallery, setGallery] = useState<GalleryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -98,12 +100,16 @@ export default function SharedGallerySection({ sessionId, photographerId, modelI
       .eq("id", gallery.id);
     setGallery({ ...gallery, status: "shared" });
 
-    // Notify model
+    // Notify model — kind+params drives localized render.
+    const sharerName = profile?.name ?? undefined;
+    const galleryNotif = t.notifs.gallery_shared({ name: sharerName });
     await supabase.from("notifications").insert({
       user_id: modelId,
       type: "gallery_shared",
-      title: "Gallery Shared! 📸",
-      body: "Your session photos are ready to view!",
+      kind: "gallery_shared",
+      params: { name: sharerName ?? null },
+      title: galleryNotif.title,
+      body: galleryNotif.body,
       data: { session_id: sessionId },
     });
 

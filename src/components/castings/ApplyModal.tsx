@@ -3,6 +3,7 @@ import { X, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 
 export default function ApplyModal({ casting, onClose, onApplied }: Props) {
   const { user } = useAuth();
+  const t = useTranslation();
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
 
@@ -30,12 +32,16 @@ export default function ApplyModal({ casting, onClose, onApplied }: Props) {
       if (error.code === "23505") toast.error("Already applied");
       else toast.error(error.message);
     } else {
-      // Notify creator
+      // Notify creator (kind+params drives localized render; legacy
+      // title/body kept for back-compat fallback)
+      const appNew = t.notifs.application_new({ castingTitle: casting.title });
       await supabase.from("notifications").insert({
         user_id: casting.creator_id,
         type: "application",
-        title: "New Application",
-        body: `Someone applied to "${casting.title}"`,
+        kind: "application_new",
+        params: { castingTitle: casting.title },
+        title: appNew.title,
+        body: appNew.body,
         data: { casting_id: casting.id, applicant_id: user.id },
       });
       toast.success("Application sent! 🎉");

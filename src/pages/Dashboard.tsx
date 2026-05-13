@@ -97,15 +97,17 @@ export default function Dashboard() {
       const partnerId = request.sender_id === user.id ? request.receiver_id : request.sender_id;
       const partnerProfile = request.sender_id === user.id ? request.receiver : request.sender;
 
+      const senderName = profile?.name || "Someone";
+
       if (status === "accepted") {
-        // Create session
+        // Create session — location nullable; Sessions.tsx renders the TBD fallback.
         const { data: newSession } = await supabase
           .from("sessions")
           .insert({
             photographer_id: request.sender_id,
             model_id: request.receiver_id,
             date: request.proposed_date || new Date().toISOString().split("T")[0],
-            location: request.proposed_location || "To be decided",
+            location: request.proposed_location || null,
             status: "upcoming" as any,
             request_id: request.id,
           })
@@ -127,21 +129,29 @@ export default function Dashboard() {
           await supabase.from("conversations").insert({ user1_id: user.id, user2_id: partnerId });
         }
 
-        // Notify sender their request was accepted
+        // Notify sender their request was accepted — kind+params drives the
+        // localized render in Notifications.tsx; legacy title/body kept as
+        // fallback for any consumer that hasn't migrated yet.
+        const tfpAccepted = t.notifs.tfp_request_accepted({ name: senderName });
         await supabase.from("notifications").insert({
           user_id: partnerId,
           type: "tfp_request",
-          title: "Request Accepted! 🎉",
-          body: `${profile?.name || "Someone"} accepted your TFP request`,
+          kind: "tfp_request_accepted",
+          params: { name: senderName },
+          title: tfpAccepted.title,
+          body: tfpAccepted.body,
           data: { sender_id: user.id },
         });
       } else {
         // Notify sender their request was declined
+        const tfpDeclined = t.notifs.tfp_request_declined({ name: senderName });
         await supabase.from("notifications").insert({
           user_id: partnerId,
           type: "tfp_request",
-          title: "Request Update",
-          body: `${profile?.name || "Someone"} declined your TFP request`,
+          kind: "tfp_request_declined",
+          params: { name: senderName },
+          title: tfpDeclined.title,
+          body: tfpDeclined.body,
           data: { sender_id: user.id },
         });
       }

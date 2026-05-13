@@ -465,6 +465,7 @@ export interface Strings {
     cancel: string;
     complete: string;
     sharedGallery: string;
+    locationTBD: string;
   };
 
   // ── Profile ──────────────────────────────────────────────────────────
@@ -1101,6 +1102,7 @@ export const EN: Strings = {
     cancel: "Cancel",
     complete: "Complete",
     sharedGallery: "Shared Gallery",
+    locationTBD: "To be decided",
   },
   profile: {
     editProfile: "Edit Profile",
@@ -1745,6 +1747,7 @@ export const PT_BR: Strings = {
     cancel: "Cancelar",
     complete: "Concluir",
     sharedGallery: "Galeria compartilhada",
+    locationTBD: "A definir",
   },
   profile: {
     editProfile: "Editar perfil",

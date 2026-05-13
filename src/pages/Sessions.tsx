@@ -180,7 +180,7 @@ export default function Sessions() {
                     {session.time ? ` ${session.time}` : ""}
                   </p>
                   <p className="text-xs font-body text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3" /> {session.location}
+                    <MapPin className="w-3 h-3" /> {session.location || t.sessions.locationTBD}
                   </p>
                 </div>
               </div>
