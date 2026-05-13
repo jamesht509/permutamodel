@@ -141,7 +141,7 @@ function detectBrand(): BrandConfig {
     if (lang.startsWith("pt")) {
       // Only auto-detect if no explicit domain match (preview environments)
       // In production, domain takes priority
-      if (hostname.includes("localhost") || hostname.includes("lovable.app")) {
+      if (hostname.includes("localhost")) {
         // In preview, use US brand by default, user can test BR via ?lang=pt
         const params = new URLSearchParams(window.location.search);
         if (params.get("lang") === "pt") return BR_BRAND;

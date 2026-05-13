@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { trackSignup, trackLogin } from "@/lib/tracking";
 
 interface Profile {
@@ -136,26 +136,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    // Use custom domain for redirect, not the Lovable preview URL
-    const isCustomDomain = !window.location.hostname.includes("lovable.app") && !window.location.hostname.includes("lovableproject.com");
-    const redirectTo = isCustomDomain ? window.location.origin : "https://collabshoot.com";
-    
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { name },
-        emailRedirectTo: redirectTo,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     return { error: error ? new Error(error.message) : null };
   };
 
   const signInWithGoogle = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: { access_type: "offline", prompt: "consent" },
+      },
     });
-    return { error: result.error ? (result.error instanceof Error ? result.error : new Error(String(result.error))) : null };
+    if (error) toast.error(error.message);
+    return { error: error ? new Error(error.message) : null };
   };
 
   const signOut = async () => {
