@@ -1,40 +1,61 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        navigate("/discover", { replace: true });
-      } else if (event === "SIGNED_OUT") {
-        navigate("/login", { replace: true });
-      }
-    });
+    let cancelled = false;
 
-    supabase.auth.getSession().then(({ data, error }) => {
-      if (error) {
-        toast.error(error.message);
-        navigate("/login", { replace: true });
-        return;
-      }
-      if (data.session?.user) {
-        navigate("/discover", { replace: true });
-      }
-    });
-
-    const params = new URLSearchParams(window.location.hash.slice(1) || window.location.search);
-    const errorDescription = params.get("error_description") || params.get("error");
-    if (errorDescription) {
-      toast.error(decodeURIComponent(errorDescription.replace(/\+/g, " ")));
+    const goSuccess = () => {
+      if (!cancelled) navigate("/discover", { replace: true });
+    };
+    const goError = (message: string) => {
+      if (cancelled) return;
+      toast.error(message);
       navigate("/login", { replace: true });
+    };
+
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const hashError = hashParams.get("error_description") || hashParams.get("error");
+    const queryError = searchParams.get("error_description") || searchParams.get("error");
+    const errorDescription = hashError || queryError;
+    if (errorDescription) {
+      goError(decodeURIComponent(errorDescription.replace(/\+/g, " ")));
+      return;
     }
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) goSuccess();
+    });
+
+    const code = searchParams.get("code");
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
+        if (error) {
+          goError(error.message);
+          return;
+        }
+        if (data.session?.user) goSuccess();
+      });
+    } else {
+      supabase.auth.getSession().then(({ data, error }) => {
+        if (error) {
+          goError(error.message);
+          return;
+        }
+        if (data.session?.user) goSuccess();
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, [navigate, searchParams]);
 
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-background">
