@@ -24,7 +24,10 @@ export default {
       },
       colors: {
         // shadcn primitive tokens (Paleta B values defined in index.css)
-        border: "hsl(var(--border))",
+        border: {
+          DEFAULT: "hsl(var(--border))",
+          strong: "hsl(var(--border-strong))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",

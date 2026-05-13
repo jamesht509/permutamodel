@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback, type AvatarSize, type AvatarStoryState } from "@/components/ui/avatar";
+import { PT_BR } from "@/lib/strings";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -191,6 +192,80 @@ export default function ComponentShowcase() {
             <p className="font-sans text-xs text-ink-tertiary">Caption — Inter 400 tertiary</p>
             <p className="font-mono text-sm text-ink">Mono — JetBrains (admin only)</p>
           </div>
+        </Section>
+
+        <Section title="Strings sampler (PT-BR)">
+          <p className="text-xs text-ink-tertiary">
+            Lookup pinned to <code className="font-mono">PT_BR</code> regardless of brand — meant for
+            copy-tone QA in one place. Each row shows the key, then the resolved string.
+          </p>
+          {(
+            [
+              ["common.empty", PT_BR.common.empty],
+              ["common.required", PT_BR.common.required],
+              ["common.optional", PT_BR.common.optional],
+              ["common.error", PT_BR.common.error],
+              ["common.success", PT_BR.common.success],
+              ["common.saveChanges", PT_BR.common.saveChanges],
+              ["cta.continue", PT_BR.cta.continue],
+              ["cta.getStarted", PT_BR.cta.getStarted],
+              ["cta.tryAgain", PT_BR.cta.tryAgain],
+              ["auth.welcome", PT_BR.auth.welcome],
+              ["auth.welcomeBack", PT_BR.auth.welcomeBack],
+              ["auth.signIn", PT_BR.auth.signIn],
+              ["auth.signUp", PT_BR.auth.signUp],
+              ["auth.createAccount", PT_BR.auth.createAccount],
+              ["nav.discover", PT_BR.nav.discover],
+              ["nav.castings", PT_BR.nav.castings],
+              ["nav.messages", PT_BR.nav.messages],
+              ["nav.favorites", PT_BR.nav.favorites],
+              ["nav.notifications", PT_BR.nav.notifications],
+              ["discover.title", PT_BR.discover.title],
+              ["discover.availableNow", PT_BR.discover.availableNow],
+              ["discover.noCreatives", PT_BR.discover.noCreatives],
+              ["discover.greetingMorning('Jemson')", PT_BR.discover.greetingMorning("Jemson")],
+              ["discover.greetingEvening('Maria')", PT_BR.discover.greetingEvening("Maria")],
+              ["profile.portfolio", PT_BR.profile.portfolio],
+              ["profile.sendRequest", PT_BR.profile.sendRequest],
+              ["profile.favorite", PT_BR.profile.favorite],
+              ["tfp.requestAccepted", PT_BR.tfp.requestAccepted],
+              ["tfp.requestDeclined", PT_BR.tfp.requestDeclined],
+              ["tfp.schedule", PT_BR.tfp.schedule],
+              ["reviews.title", PT_BR.reviews.title],
+              ["reviews.submit", PT_BR.reviews.submit],
+              ["castings.title", PT_BR.castings.title],
+              ["castings.apply", PT_BR.castings.apply],
+              ["errors.network", PT_BR.errors.network],
+              ["errors.sessionExpired", PT_BR.errors.sessionExpired],
+              ["validation.invalidEmail", PT_BR.validation.invalidEmail],
+            ] as Array<[string, string]>
+          ).map(([key, value]) => (
+            <div key={key} className="grid grid-cols-[260px_1fr] gap-3 items-baseline py-1 border-b border-border/40">
+              <code className="font-mono text-[11px] text-ink-tertiary">t.{key}</code>
+              <span className="text-sm text-ink">{value}</span>
+            </div>
+          ))}
+
+          <h3 className="font-display text-sm font-semibold text-ink-secondary pt-4 uppercase tracking-wider">notifs templates</h3>
+          {(
+            [
+              ["tfp_request_new({name:'Maria', title:'Editorial urbano'})", PT_BR.notifs.tfp_request_new({ name: "Maria", title: "Editorial urbano" })],
+              ["tfp_request_accepted({name:'João'})", PT_BR.notifs.tfp_request_accepted({ name: "João" })],
+              ["tfp_request_declined({name:'João'})", PT_BR.notifs.tfp_request_declined({ name: "João" })],
+              ["application_new({castingTitle:'Editorial SP'})", PT_BR.notifs.application_new({ castingTitle: "Editorial SP" })],
+              ["application_accepted({castingTitle:'Editorial SP'})", PT_BR.notifs.application_accepted({ castingTitle: "Editorial SP" })],
+              ["application_declined({})", PT_BR.notifs.application_declined({})],
+              ["photo_like({name:'Ana'})", PT_BR.notifs.photo_like({ name: "Ana" })],
+              ["photo_comment({name:'Ana', preview:'Linda foto!'})", PT_BR.notifs.photo_comment({ name: "Ana", preview: "Linda foto!" })],
+              ["gallery_shared({name:'Pedro'})", PT_BR.notifs.gallery_shared({ name: "Pedro" })],
+            ] as Array<[string, { title: string; body: string }]>
+          ).map(([key, payload]) => (
+            <div key={key} className="rounded-md border border-border bg-surface p-3 space-y-1">
+              <code className="font-mono text-[10px] text-ink-tertiary">t.notifs.{key}</code>
+              <div className="font-display text-sm font-semibold text-ink">{payload.title}</div>
+              <div className="text-sm text-ink-secondary">{payload.body}</div>
+            </div>
+          ))}
         </Section>
 
         <Section title="Box shadows">

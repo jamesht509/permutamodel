@@ -23,7 +23,7 @@ const STORY_RING_CLASSES: Record<AvatarStoryState, string> = {
   unseen:
     "before:content-[''] before:absolute before:inset-[-3px] before:rounded-full before:border-2 before:border-solid before:border-coral before:pointer-events-none",
   seen:
-    "before:content-[''] before:absolute before:inset-[-3px] before:rounded-full before:border-2 before:border-solid before:border-[hsl(var(--border-strong))] before:pointer-events-none",
+    "before:content-[''] before:absolute before:inset-[-3px] before:rounded-full before:border-2 before:border-solid before:border-border-strong before:pointer-events-none",
 };
 
 export interface AvatarProps

@@ -1,8 +1,11 @@
 import { useMemo } from "react";
 import { useBrand } from "@/hooks/useBrand";
-import { getTranslations, type AppTranslations } from "@/lib/translations";
+import { getStrings, type Strings, type AppTranslations } from "@/lib/strings";
 
-export function useTranslation(): AppTranslations {
+export function useTranslation(): Strings {
   const brand = useBrand();
-  return useMemo(() => getTranslations(brand.lang), [brand.lang]);
+  return useMemo(() => getStrings(brand.lang), [brand.lang]);
 }
+
+// Re-export for legacy import paths that referenced the type via this module.
+export type { Strings, AppTranslations };
