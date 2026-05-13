@@ -25,6 +25,9 @@ const UserProfile = lazy(() => import("@/pages/UserProfile"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const AuthCallback = lazy(() => import("@/pages/AuthCallback"));
+const ComponentShowcase = import.meta.env.DEV
+  ? lazy(() => import("@/pages/_dev/ComponentShowcase"))
+  : null;
 const Sessions = lazy(() => import("@/pages/Sessions"));
 const Favorites = lazy(() => import("@/pages/Favorites"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
@@ -71,6 +74,9 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
+                {ComponentShowcase && (
+                  <Route path="/_dev/components" element={<ComponentShowcase />} />
+                )}
                 <Route path="/" element={<Landing />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
