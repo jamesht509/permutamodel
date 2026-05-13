@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Star, Filter, X, MapPin, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import CreateCastingModal from "@/components/castings/CreateCastingModal";
 
+// FASE 6 BR vocab — style filter list is domain vocabulary and may need
+// localization/replacement once the BR styles taxonomy is decided.
 const STYLE_FILTERS = ["Portrait", "Fashion", "Lifestyle", "Editorial", "Boudoir", "Fine Art", "Fitness", "Commercial", "Street", "Conceptual"];
 
 interface CastingCard {
@@ -31,19 +34,19 @@ interface CastingCard {
 
 type Tab = "open" | "mine" | "applied";
 
-function timeAgo(d: string | null): string {
-  if (!d) return "";
-  const diff = Date.now() - new Date(d).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
-
 export default function Castings() {
   const { user } = useAuth();
+  const t = useTranslation();
   const navigate = useNavigate();
+
+  const timeAgo = (d: string | null): string => {
+    if (!d) return "";
+    const diff = Date.now() - new Date(d).getTime();
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(mins / 60);
+    const days = Math.floor(hours / 24);
+    return t.castingsPage.timeAgo(mins, hours, days);
+  };
   const [tab, setTab] = useState<Tab>("open");
   const [castings, setCastings] = useState<CastingCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,7 +126,7 @@ export default function Castings() {
       {/* Header */}
       <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-xl border-b border-border">
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
-          <h1 className="font-heading text-2xl font-bold text-foreground">Casting Calls</h1>
+          <h1 className="font-heading text-2xl font-bold text-foreground">{t.castings.title}</h1>
           <div className="flex gap-2">
             {tab === "open" && (
               <button onClick={() => setShowFilters(!showFilters)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors ${activeFilters > 0 ? "bg-primary/15 border-primary text-primary" : "border-border text-muted-foreground"}`}>
@@ -136,12 +139,12 @@ export default function Castings() {
           </div>
         </div>
         <div className="flex gap-1 px-4 pb-3">
-          {([["open", "Open"], ["mine", "My Castings"], ["applied", "Applied"]] as [Tab, string][]).map(([t, label]) => (
+          {([["open", t.castingsPage.tabOpen], ["mine", t.castingsPage.tabMine], ["applied", t.castingsPage.tabApplied]] as [Tab, string][]).map(([tabKey, label]) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={tabKey}
+              onClick={() => setTab(tabKey)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-body font-medium transition-all ${
-                tab === t ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground" : "bg-card/50 text-muted-foreground border border-border"
+                tab === tabKey ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground" : "bg-card/50 text-muted-foreground border border-border"
               }`}
             >
               {label}
@@ -155,7 +158,7 @@ export default function Castings() {
             <input
               value={filterLocation}
               onChange={(e) => setFilterLocation(e.target.value)}
-              placeholder="Filter by location..."
+              placeholder={t.castingsPage.filterByLocation}
               className="w-full px-3 py-2 rounded-xl bg-card/50 border border-border text-foreground placeholder:text-muted-foreground/60 text-sm font-body focus:outline-none focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-1.5">
@@ -173,7 +176,7 @@ export default function Castings() {
             </div>
             {activeFilters > 0 && (
               <button onClick={() => { setFilterStyles([]); setFilterLocation(""); }} className="text-xs text-destructive font-body flex items-center gap-1">
-                <X className="w-3 h-3" /> Clear filters
+                <X className="w-3 h-3" /> {t.castingsPage.clearFilters}
               </button>
             )}
           </div>
@@ -192,14 +195,14 @@ export default function Castings() {
           <div className="text-center py-16 px-4">
             <Star className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
             <h3 className="font-heading text-lg font-bold text-foreground mb-2">
-              {tab === "mine" ? "No castings created yet" : tab === "applied" ? "No applications yet" : "No open castings"}
+              {tab === "mine" ? t.castingsPage.emptyMineTitle : tab === "applied" ? t.castingsPage.emptyAppliedTitle : t.castings.noCastings}
             </h3>
             <p className="font-body text-sm text-muted-foreground mb-5">
-              {tab === "mine" ? "Create your first casting call" : "Check back later for new opportunities"}
+              {tab === "mine" ? t.castingsPage.emptyMineSub : t.castings.noCastingsSub}
             </p>
             {tab === "mine" && (
               <button onClick={() => setShowCreate(true)} className="px-6 py-3 rounded-xl gold-gradient text-primary-foreground font-body font-semibold text-sm">
-                Create Casting Call
+                {t.castingsPage.createCtaInEmpty}
               </button>
             )}
           </div>
@@ -231,18 +234,20 @@ export default function Castings() {
                     c.status === "open" ? "bg-green-500/15 text-green-400" :
                     c.status === "filled" ? "bg-primary/15 text-primary" :
                     "bg-muted text-muted-foreground"
-                  }`}>{c.status}</span>
+                  }`}>
+                    {c.status === "open" ? t.castings.open : c.status === "filled" ? t.castings.filled : c.status === "expired" ? t.castings.expired : c.status}
+                  </span>
                 </div>
 
                 <h3 className="text-foreground font-bold text-base font-heading mb-1">{c.title}</h3>
                 <p className="text-muted-foreground text-sm font-body mb-3 line-clamp-2">{c.description}</p>
 
                 <div className="flex flex-wrap gap-3 mb-3 text-xs text-muted-foreground font-body">
-                  {c.proposed_date && <span className="inline-flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {c.is_flexible_date ? "Flexible" : c.proposed_date}</span>}
+                  {c.proposed_date && <span className="inline-flex items-center gap-1"><CalendarDays className="w-3 h-3" /> {c.is_flexible_date ? t.castings.flexible : c.proposed_date}</span>}
                   {c.location && <span className="inline-flex items-center gap-1"><MapPin className="w-3 h-3" /> {c.location}</span>}
                   {c.duration && <span>{c.duration}</span>}
-                  <span>{c.filled_slots || 0}/{c.slots} filled</span>
-                  <span>{c.applicationCount} applied</span>
+                  <span>{t.castingsPage.filledLabel(c.filled_slots || 0, c.slots)}</span>
+                  <span>{t.castingsPage.appliedLabel(c.applicationCount)}</span>
                 </div>
 
                 {c.styles.length > 0 && (

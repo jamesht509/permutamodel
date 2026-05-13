@@ -141,6 +141,139 @@ export interface Strings {
     refresh: string;
   };
 
+  // ── 404 ─────────────────────────────────────────────────────────────
+  notFound: {
+    title: string;
+    body: string;
+    backToDiscover: string;
+  };
+
+  // ── Reset password page ─────────────────────────────────────────────
+  resetPassword: {
+    title: string;
+    newPasswordPlaceholder: string;
+    confirmPasswordPlaceholder: string;
+    update: string;
+    updating: string;
+    updated: string;
+    invalidLink: string;
+  };
+
+  // ── Onboarding shell (steps live in onboarding namespace) ───────────
+  onboardingShell: {
+    stepAboutYou: string;
+    stepYourCraft: string;
+    stepYourWork: string;
+    settingUp: string;
+    completeSetup: string;
+    welcomeToast: (brandName: string) => string;
+    missingPrefix: string;
+    missingFields: {
+      name: string;
+      avatar: string;
+      location: string;
+      instagram: string;
+      portfolio: string;
+    };
+    genericError: string;
+  };
+
+  // ── Castings list page (extends t.castings) ──────────────────────────
+  castingsPage: {
+    tabOpen: string;
+    tabMine: string;
+    tabApplied: string;
+    filterByLocation: string;
+    clearFilters: string;
+    emptyMineTitle: string;
+    emptyMineSub: string;
+    emptyAppliedTitle: string;
+    createCtaInEmpty: string;
+    filledLabel: (filled: number, total: number) => string;
+    appliedLabel: (n: number) => string;
+    timeAgo: (mins: number, hours: number, days: number) => string;
+  };
+
+  // ── Casting detail page ─────────────────────────────────────────────
+  castingDetail: {
+    date: string;
+    location: string;
+    duration: string;
+    slots: string;
+    indoor: string;
+    outdoor: string;
+    lookingFor: string;
+    styles: string;
+    requirements: string;
+    moodboard: string;
+    viewApplications: (count: number) => string;
+    cancelCasting: string;
+    applyNowWithCount: (count: number) => string;
+    appliedBadge: string;
+    updated: string;
+    deleted: string;
+    cancelled: string;
+    titleLabel: string;
+    descriptionLabel: string;
+    stylesLabel: string;
+    locationLabel: string;
+    slotsLabel: string;
+    durationLabel: string;
+    moodboardLabel: string;
+    requirementsLabel: string;
+  };
+
+  // ── Edit profile page ───────────────────────────────────────────────
+  editProfile: {
+    title: string;
+    tapToChangeAvatar: string;
+    avatarUploadFailed: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    nameRequired: string;
+    roleLabel: string;
+    bioLabel: string;
+    bioPlaceholder: string;
+    updateMyLocation: string;
+    detectingLocation: string;
+    locationDetectFailed: string;
+    locationUpdated: (city: string, state: string) => string;
+    cityLabel: string;
+    cityPlaceholder: string;
+    stateLabel: string;
+    statePlaceholder: string;
+    instagramLabel: string;
+    websiteLabel: string;
+    stylesLabelMax: (max: number) => string;
+    equipmentLabel: string;
+    equipmentPlaceholder: string;
+    addBtn: string;
+    measurementsLabel: string;
+    hasStudio: string;
+    availableDays: string;
+    timePreferences: string;
+    travelRadius: (value: number, unit: string) => string;
+    photosSection: string;
+    saved: string;
+    saveFailed: string;
+  };
+
+  // ── Chat page (extends t.messages) ──────────────────────────────────
+  chatPage: {
+    unknownUser: string;
+    typingIndicator: string;
+    tfpBannerLabel: string;       // "TFP" badge prefix
+    tfpFallbackTitle: string;     // when no style: "Collaboration"
+    blockUser: string;
+    unblock: string;
+    blockedToast: (name: string) => string;
+    unblockedToast: (name: string) => string;
+    cannotMessage: string;        // toast + input bar message
+    sendFailed: string;
+    youBlocked: string;           // input bar: "You blocked this user"
+    unblockToContinue: string;
+  };
+
   // ── Navigation & layout ─────────────────────────────────────────────
   nav: {
     discover: string;
@@ -678,6 +811,129 @@ export const EN: Strings = {
     message: "An unexpected error occurred. Please try refreshing the page.",
     refresh: "Refresh Page",
   },
+  notFound: {
+    title: "Page Not Found",
+    body: "The page you're looking for doesn't exist or has been moved.",
+    backToDiscover: "Back to Discover",
+  },
+  resetPassword: {
+    title: "Reset Password",
+    newPasswordPlaceholder: "New password",
+    confirmPasswordPlaceholder: "Confirm password",
+    update: "Update Password",
+    updating: "Updating...",
+    updated: "Password updated successfully!",
+    invalidLink: "Invalid reset link.",
+  },
+  onboardingShell: {
+    stepAboutYou: "About You",
+    stepYourCraft: "Your Craft",
+    stepYourWork: "Your Work",
+    settingUp: "Setting up...",
+    completeSetup: "Complete Setup",
+    welcomeToast: (brandName) => `Welcome to ${brandName}! 🎉`,
+    missingPrefix: "Missing",
+    missingFields: {
+      name: "Name",
+      avatar: "Profile photo",
+      location: "Location",
+      instagram: "Instagram",
+      portfolio: "At least 1 portfolio photo",
+    },
+    genericError: "Something went wrong",
+  },
+  castingsPage: {
+    tabOpen: "Open",
+    tabMine: "My Castings",
+    tabApplied: "Applied",
+    filterByLocation: "Filter by location...",
+    clearFilters: "Clear filters",
+    emptyMineTitle: "No castings created yet",
+    emptyMineSub: "Create your first casting call",
+    emptyAppliedTitle: "No applications yet",
+    createCtaInEmpty: "Create Casting Call",
+    filledLabel: (filled, total) => `${filled}/${total} filled`,
+    appliedLabel: (n) => `${n} applied`,
+    timeAgo: (mins, hours, days) => {
+      if (days >= 1) return `${days}d ago`;
+      if (hours >= 1) return `${hours}h ago`;
+      return `${mins}m ago`;
+    },
+  },
+  castingDetail: {
+    date: "Date",
+    location: "Location",
+    duration: "Duration",
+    slots: "Slots",
+    indoor: "Indoor",
+    outdoor: "Outdoor",
+    lookingFor: "Looking for",
+    styles: "Styles",
+    requirements: "Requirements",
+    moodboard: "Moodboard",
+    viewApplications: (count) => `View Applications (${count})`,
+    cancelCasting: "Cancel Casting",
+    applyNowWithCount: (count) => `Apply Now (${count} applied)`,
+    appliedBadge: "Applied ✓",
+    updated: "Casting updated!",
+    deleted: "Casting deleted",
+    cancelled: "Casting cancelled",
+    titleLabel: "Title",
+    descriptionLabel: "Description",
+    stylesLabel: "Styles",
+    locationLabel: "Location",
+    slotsLabel: "Slots",
+    durationLabel: "Duration",
+    moodboardLabel: "Moodboard",
+    requirementsLabel: "Requirements",
+  },
+  editProfile: {
+    title: "Edit Profile",
+    tapToChangeAvatar: "Tap to change avatar",
+    avatarUploadFailed: "Failed to upload avatar",
+    nameLabel: "Name",
+    namePlaceholder: "Your name",
+    nameRequired: "Name is required",
+    roleLabel: "Role",
+    bioLabel: "Bio",
+    bioPlaceholder: "Tell people about yourself...",
+    updateMyLocation: "Update My Location",
+    detectingLocation: "Detecting location...",
+    locationDetectFailed: "Couldn't detect location. Enter manually.",
+    locationUpdated: (city, state) => `Location updated: ${city}, ${state}`,
+    cityLabel: "City",
+    cityPlaceholder: "Worcester",
+    stateLabel: "State",
+    statePlaceholder: "MA",
+    instagramLabel: "Instagram",
+    websiteLabel: "Website",
+    stylesLabelMax: (max) => `Styles (up to ${max})`,
+    equipmentLabel: "Equipment",
+    equipmentPlaceholder: "Add equipment...",
+    addBtn: "Add",
+    measurementsLabel: "Measurements",
+    hasStudio: "Has Studio",
+    availableDays: "Available Days",
+    timePreferences: "Time Preferences",
+    travelRadius: (value, unit) => `Travel Radius: ${value} ${unit}`,
+    photosSection: "Photos",
+    saved: "Profile updated!",
+    saveFailed: "Failed to save",
+  },
+  chatPage: {
+    unknownUser: "Unknown",
+    typingIndicator: "typing...",
+    tfpBannerLabel: "TFP",
+    tfpFallbackTitle: "Collaboration",
+    blockUser: "Block User",
+    unblock: "Unblock",
+    blockedToast: (name) => `${name} blocked`,
+    unblockedToast: (name) => `${name} unblocked`,
+    cannotMessage: "You can't message this user",
+    sendFailed: "Failed to send message",
+    youBlocked: "You blocked this user",
+    unblockToContinue: "Unblock to continue chatting",
+  },
   nav: {
     discover: "Discover",
     dashboard: "Dashboard",
@@ -1171,6 +1427,129 @@ export const PT_BR: Strings = {
     title: "Deu ruim por aqui",
     message: "Aconteceu um erro inesperado. Tenta recarregar a página.",
     refresh: "Recarregar",
+  },
+  notFound: {
+    title: "Não achamos essa página",
+    body: "A página que tu tá procurando não existe ou foi movida.",
+    backToDiscover: "Voltar pro início",
+  },
+  resetPassword: {
+    title: "Trocar senha",
+    newPasswordPlaceholder: "Nova senha",
+    confirmPasswordPlaceholder: "Confirma a senha",
+    update: "Salvar senha",
+    updating: "Salvando...",
+    updated: "Senha atualizada!",
+    invalidLink: "Link inválido.",
+  },
+  onboardingShell: {
+    stepAboutYou: "Sobre ti",
+    stepYourCraft: "Tua arte",
+    stepYourWork: "Teu trabalho",
+    settingUp: "Configurando teu perfil...",
+    completeSetup: "Finalizar cadastro",
+    welcomeToast: (brandName) => `Beleza! Bem-vindo ao ${brandName} 🎉`,
+    missingPrefix: "Falta",
+    missingFields: {
+      name: "Nome",
+      avatar: "Foto de perfil",
+      location: "Localização",
+      instagram: "Instagram",
+      portfolio: "Pelo menos 1 foto do book",
+    },
+    genericError: "Deu ruim",
+  },
+  castingsPage: {
+    tabOpen: "Abertos",
+    tabMine: "Meus trampos",
+    tabApplied: "Onde tô",
+    filterByLocation: "Filtrar por localização...",
+    clearFilters: "Limpar filtros",
+    emptyMineTitle: "Sem trampos criados ainda",
+    emptyMineSub: "Cria teu primeiro trampo",
+    emptyAppliedTitle: "Tu ainda não se candidatou",
+    createCtaInEmpty: "Criar trampo",
+    filledLabel: (filled, total) => `${filled}/${total} preenchidas`,
+    appliedLabel: (n) => `${n} ${n === 1 ? "candidatura" : "candidaturas"}`,
+    timeAgo: (mins, hours, days) => {
+      if (days >= 1) return `há ${days}d`;
+      if (hours >= 1) return `há ${hours}h`;
+      return `há ${mins}min`;
+    },
+  },
+  castingDetail: {
+    date: "Data",
+    location: "Local",
+    duration: "Duração",
+    slots: "Vagas",
+    indoor: "Interno",
+    outdoor: "Externo",
+    lookingFor: "Procurando",
+    styles: "Estilos",
+    requirements: "Requisitos",
+    moodboard: "Moodboard",
+    viewApplications: (count) => `Ver candidaturas (${count})`,
+    cancelCasting: "Cancelar trampo",
+    applyNowWithCount: (count) => `Bora! (${count} ${count === 1 ? "já tá dentro" : "já tão dentro"})`,
+    appliedBadge: "Já tô dentro ✓",
+    updated: "Trampo atualizado!",
+    deleted: "Trampo apagado",
+    cancelled: "Trampo cancelado",
+    titleLabel: "Título",
+    descriptionLabel: "Descrição",
+    stylesLabel: "Estilos",
+    locationLabel: "Local",
+    slotsLabel: "Vagas",
+    durationLabel: "Duração",
+    moodboardLabel: "Moodboard",
+    requirementsLabel: "Requisitos",
+  },
+  editProfile: {
+    title: "Editar perfil",
+    tapToChangeAvatar: "Toca pra trocar a foto",
+    avatarUploadFailed: "Não rolou subir o avatar",
+    nameLabel: "Nome",
+    namePlaceholder: "Teu nome",
+    nameRequired: "Coloca teu nome",
+    roleLabel: "Você é",
+    bioLabel: "Bio",
+    bioPlaceholder: "Conta um pouco de ti...",
+    updateMyLocation: "Atualizar minha localização",
+    detectingLocation: "Detectando localização...",
+    locationDetectFailed: "Não rolou pegar tua localização. Coloca manualmente.",
+    locationUpdated: (city, state) => `Localização atualizada: ${city}, ${state}`,
+    cityLabel: "Cidade",
+    cityPlaceholder: "São Paulo",
+    stateLabel: "Estado",
+    statePlaceholder: "SP",
+    instagramLabel: "Instagram",
+    websiteLabel: "Site",
+    stylesLabelMax: (max) => `Estilos (até ${max})`,
+    equipmentLabel: "Equipamento",
+    equipmentPlaceholder: "Adicionar equipamento...",
+    addBtn: "Adicionar",
+    measurementsLabel: "Medidas",
+    hasStudio: "Tenho estúdio",
+    availableDays: "Dias disponíveis",
+    timePreferences: "Horários preferidos",
+    travelRadius: (value, unit) => `Raio de deslocamento: ${value} ${unit}`,
+    photosSection: "Fotos",
+    saved: "Perfil atualizado!",
+    saveFailed: "Não rolou salvar",
+  },
+  chatPage: {
+    unknownUser: "Desconhecido",
+    typingIndicator: "digitando...",
+    tfpBannerLabel: "Permuta",
+    tfpFallbackTitle: "Colaboração",
+    blockUser: "Bloquear",
+    unblock: "Desbloquear",
+    blockedToast: (name) => `${name} bloqueado`,
+    unblockedToast: (name) => `${name} desbloqueado`,
+    cannotMessage: "Não dá pra mandar DM pra essa pessoa",
+    sendFailed: "Não rolou enviar a mensagem",
+    youBlocked: "Tu bloqueou essa pessoa",
+    unblockToContinue: "Desbloqueia pra continuar conversando",
   },
   nav: {
     discover: "Início",

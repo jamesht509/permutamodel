@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 import { geocodeAddress } from "@/lib/geocoding";
 import StepAboutYou from "@/components/onboarding/StepAboutYou";
 import StepCraft from "@/components/onboarding/StepCraft";
@@ -38,6 +39,7 @@ export interface OnboardingData {
 export default function Onboarding() {
   const { user, profile, refreshProfile } = useAuth();
   const brand = useBrand();
+  const t = useTranslation();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
@@ -74,15 +76,16 @@ export default function Onboarding() {
   };
 
   const getMissingFields = (): string[] => {
+    const m = t.onboardingShell.missingFields;
     const missing: string[] = [];
     if (step === 1) {
-      if (!data.name.trim()) missing.push("Name");
-      if (!data.avatar_url) missing.push("Profile photo");
-      if (!data.city.trim() || !data.state.trim()) missing.push("Location");
-      if (!data.instagram.trim()) missing.push("Instagram");
+      if (!data.name.trim()) missing.push(m.name);
+      if (!data.avatar_url) missing.push(m.avatar);
+      if (!data.city.trim() || !data.state.trim()) missing.push(m.location);
+      if (!data.instagram.trim()) missing.push(m.instagram);
     }
     if (step === 3) {
-      if (data.portfolioUrls.length === 0) missing.push("At least 1 portfolio photo");
+      if (data.portfolioUrls.length === 0) missing.push(m.portfolio);
     }
     return missing;
   };
@@ -140,7 +143,7 @@ export default function Onboarding() {
       if (error) throw error;
 
       await refreshProfile();
-      toast.success(`Welcome to ${brand.name}! 🎉`);
+      toast.success(t.onboardingShell.welcomeToast(brand.name));
 
       // Send welcome email (fire-and-forget)
       supabase.functions.invoke("send-welcome", {
@@ -149,7 +152,7 @@ export default function Onboarding() {
 
       navigate("/discover");
     } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
+      toast.error(err.message || t.onboardingShell.genericError);
     } finally {
       setSaving(false);
     }
@@ -167,7 +170,11 @@ export default function Onboarding() {
     if (step > 1) setStep((s) => s - 1);
   };
 
-  const stepTitles = ["About You", "Your Craft", "Your Work"];
+  const stepTitles = [
+    t.onboardingShell.stepAboutYou,
+    t.onboardingShell.stepYourCraft,
+    t.onboardingShell.stepYourWork,
+  ];
 
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col">
@@ -225,17 +232,17 @@ export default function Onboarding() {
           {saving ? (
             <span className="flex items-center justify-center gap-2">
               <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-              Setting up...
+              {t.onboardingShell.settingUp}
             </span>
           ) : step === TOTAL_STEPS ? (
-            "Complete Setup"
+            t.onboardingShell.completeSetup
           ) : (
-            "Continue"
+            t.cta.continue
           )}
         </button>
         {!canContinue() && (
           <p className="text-center text-xs font-body text-muted-foreground">
-            {getMissingFields().length > 0 && `Missing: ${getMissingFields().join(", ")}`}
+            {getMissingFields().length > 0 && `${t.onboardingShell.missingPrefix}: ${getMissingFields().join(", ")}`}
           </p>
         )}
       </div>
