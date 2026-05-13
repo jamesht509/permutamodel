@@ -14,12 +14,20 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['"Playfair Display"', "serif"],
+        display: ['"Sora"', '"Inter"', "system-ui", "sans-serif"],
+        sans: ['"Inter"', "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+        // Legacy aliases kept for existing pages — remap to PermutaModel families
+        heading: ['"Sora"', '"Inter"', "sans-serif"],
         body: ['"Inter"', "sans-serif"],
-        accent: ['"Cormorant Garamond"', "serif"],
+        accent: ['"Sora"', '"Inter"', "sans-serif"],
       },
       colors: {
-        border: "hsl(var(--border))",
+        // shadcn primitive tokens (Paleta B values defined in index.css)
+        border: {
+          DEFAULT: "hsl(var(--border))",
+          strong: "hsl(var(--border-strong))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
@@ -64,11 +72,28 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Paleta B — direct-access tokens (named so utilities read cleanly)
+        surface: "hsl(var(--bg-surface))",    // bg-surface, border-surface
+        elevated: "hsl(var(--bg-elevated))",  // bg-elevated
+        coral: "hsl(var(--accent-warm))",     // bg-coral, text-coral, border-coral
+        lavender: "hsl(var(--accent-cool))",  // bg-lavender, text-lavender
+        danger: "hsl(var(--danger))",         // bg-danger, text-danger
+        ink: {
+          DEFAULT: "hsl(var(--text-primary))",
+          secondary: "hsl(var(--text-secondary))",
+          tertiary: "hsl(var(--text-tertiary))",
+        },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "0.5rem",   //  8px
+        md: "0.75rem",  // 12px
+        lg: "1rem",     // 16px
+        xl: "1.5rem",   // 24px
+      },
+      boxShadow: {
+        elevated: "0 8px 32px rgba(20, 16, 31, 0.6)",
+        "focus-coral": "0 0 0 3px rgba(255, 107, 74, 0.3)",
+        "glow-cta": "0 0 24px rgba(255, 107, 74, 0.25)",
       },
       keyframes: {
         "accordion-down": {

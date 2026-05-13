@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Heart, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
@@ -34,6 +35,7 @@ interface Props {
 
 export default function PortfolioGrid({ photos, isOwner, ownerId, onDelete }: Props) {
   const { user, profile } = useAuth();
+  const t = useTranslation();
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -110,11 +112,15 @@ export default function PortfolioGrid({ photos, isOwner, ownerId, onDelete }: Pr
 
       // Send notification to photo owner (not to self)
       if (ownerId && ownerId !== user.id) {
+        const likerName = profile?.name || "Someone";
+        const likeNotif = t.notifs.photo_like({ name: likerName });
         await supabase.from("notifications").insert({
           user_id: ownerId,
           type: "photo_like",
-          title: "Someone liked your photo ❤️",
-          body: `${profile?.name || "Someone"} liked your photo`,
+          kind: "photo_like",
+          params: { name: likerName },
+          title: likeNotif.title,
+          body: likeNotif.body,
           data: { sender_id: user.id, photo_id: photoId },
         });
       }
@@ -146,11 +152,17 @@ export default function PortfolioGrid({ photos, isOwner, ownerId, onDelete }: Pr
 
     // Notify photo owner
     if (ownerId && ownerId !== user.id) {
+      const commenterName = profile?.name || "Someone";
+      const trimmedComment = commentText.trim();
+      const preview = trimmedComment.slice(0, 60) + (trimmedComment.length > 60 ? "..." : "");
+      const commentNotif = t.notifs.photo_comment({ name: commenterName, preview });
       await supabase.from("notifications").insert({
         user_id: ownerId,
         type: "photo_comment",
-        title: "New comment on your photo 💬",
-        body: `${profile?.name || "Someone"}: "${commentText.trim().slice(0, 60)}${commentText.trim().length > 60 ? "..." : ""}"`,
+        kind: "photo_comment",
+        params: { name: commenterName, preview },
+        title: commentNotif.title,
+        body: commentNotif.body,
         data: { sender_id: user.id, photo_id: photoId },
       });
     }

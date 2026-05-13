@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Send, MoreVertical, ShieldBan, ShieldCheck, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 import { format, isToday, isYesterday, isSameDay } from "date-fns";
 
@@ -34,17 +35,18 @@ function isOnline(lastActive: string | null): boolean {
   return Date.now() - new Date(lastActive).getTime() < 5 * 60 * 1000;
 }
 
-function formatDayLabel(dateStr: string): string {
-  const d = new Date(dateStr);
-  if (isToday(d)) return "Today";
-  if (isYesterday(d)) return "Yesterday";
-  return format(d, "MMMM d, yyyy");
-}
-
 export default function Chat() {
   const { conversationId } = useParams<{ conversationId: string }>();
   const { user } = useAuth();
+  const t = useTranslation();
   const navigate = useNavigate();
+
+  const formatDayLabel = (dateStr: string): string => {
+    const d = new Date(dateStr);
+    if (isToday(d)) return t.common.today;
+    if (isYesterday(d)) return t.common.yesterday;
+    return format(d, "MMMM d, yyyy");
+  };
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [otherUser, setOtherUser] = useState<OtherUser | null>(null);
@@ -112,7 +114,7 @@ export default function Chat() {
 
       if (tfpReq) {
         setTfpInfo({
-          title: tfpReq.message?.split("\n")[0] || "TFP Collaboration",
+          title: tfpReq.message?.split("\n")[0] || t.chatPage.tfpFallbackTitle,
           status: tfpReq.status,
           style: tfpReq.style,
         });
@@ -198,12 +200,12 @@ export default function Chat() {
       await supabase.from("blocked_users").delete().eq("blocker_id", user.id).eq("blocked_id", otherUser.id);
       setIsBlocked(false);
       setShowMenu(false);
-      toast.success(`${otherUser.name} unblocked`);
+      toast.success(t.chatPage.unblockedToast(otherUser.name));
     } else {
       await supabase.from("blocked_users").insert({ blocker_id: user.id, blocked_id: otherUser.id });
       setIsBlocked(true);
       setShowMenu(false);
-      toast.success(`${otherUser.name} blocked`);
+      toast.success(t.chatPage.blockedToast(otherUser.name));
     }
   };
 
@@ -223,9 +225,9 @@ export default function Chat() {
 
     if (error) {
       if (error.message?.includes("row-level security")) {
-        toast.error("You can't message this user");
+        toast.error(t.chatPage.cannotMessage);
       } else {
-        toast.error("Failed to send message");
+        toast.error(t.chatPage.sendFailed);
       }
     } else {
       await supabase
@@ -300,11 +302,11 @@ export default function Chat() {
           )}
         </div>
         <div className="flex-1 cursor-pointer" onClick={() => otherUser && navigate(`/profile/${otherUser.id}`)}>
-          <p className="font-body font-semibold text-sm text-foreground">{otherUser?.name || "Unknown"}</p>
+          <p className="font-body font-semibold text-sm text-foreground">{otherUser?.name || t.chatPage.unknownUser}</p>
           <p className="font-body text-[10px] text-muted-foreground">
             {isTyping ? (
-              <span className="text-primary animate-pulse">typing...</span>
-            ) : otherUser && isOnline(otherUser.last_active) ? "Online" : "Offline"}
+              <span className="text-primary animate-pulse">{t.chatPage.typingIndicator}</span>
+            ) : otherUser && isOnline(otherUser.last_active) ? t.messages.online : t.messages.offline}
           </p>
         </div>
         {/* Block menu */}
@@ -323,7 +325,7 @@ export default function Chat() {
                 }`}
               >
                 {isBlocked ? <ShieldCheck className="w-4 h-4" /> : <ShieldBan className="w-4 h-4" />}
-                {isBlocked ? "Unblock" : "Block User"}
+                {isBlocked ? t.chatPage.unblock : t.chatPage.blockUser}
               </button>
             </div>
           )}
@@ -333,7 +335,7 @@ export default function Chat() {
       {/* TFP Banner */}
       {tfpInfo && (
         <div className="px-4 py-2 bg-primary/10 border-b border-primary/20 flex items-center gap-2">
-          <span className="font-body text-xs font-medium text-primary inline-flex items-center gap-1.5"><Camera className="w-3.5 h-3.5" /> TFP: {tfpInfo.style || "Collaboration"}</span>
+          <span className="font-body text-xs font-medium text-primary inline-flex items-center gap-1.5"><Camera className="w-3.5 h-3.5" /> {t.chatPage.tfpBannerLabel}: {tfpInfo.style || t.chatPage.tfpFallbackTitle}</span>
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor[tfpInfo.status] || "bg-muted text-muted-foreground"}`}>
             {tfpInfo.status.toUpperCase()}
           </span>
@@ -408,12 +410,12 @@ export default function Chat() {
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
             <ShieldBan className="w-4 h-4" />
             <p className="font-body text-sm">
-              {isBlocked ? "You blocked this user" : "You can't message this user"}
+              {isBlocked ? t.chatPage.youBlocked : t.chatPage.cannotMessage}
             </p>
           </div>
           {isBlocked && (
             <button onClick={handleBlock} className="mt-2 text-xs font-body text-primary hover:text-primary/80 transition-colors">
-              Unblock to continue chatting
+              {t.chatPage.unblockToContinue}
             </button>
           )}
         </div>
@@ -427,7 +429,7 @@ export default function Chat() {
                 broadcastTyping();
               }}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message..."
+              placeholder={t.messages.typeMessage}
               rows={1}
               className="flex-1 px-4 py-2.5 rounded-xl bg-muted border border-border text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none max-h-24"
             />

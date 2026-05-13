@@ -12,30 +12,13 @@ import CastingsTab from "@/components/discover/CastingsTab";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useBrand } from "@/hooks/useBrand";
 
-const ROLE_FILTERS = [
-  { label: "All", value: "" },
-  { label: "Photographers", value: "photographer" },
-  { label: "Models", value: "model" },
-];
-
+// FASE 6 BR vocab — SPECIALTIES is domain vocabulary, decision pending.
+// Filter VALUES below stay EN (used in DB queries / URL params); LABELS are
+// pulled from t.discover.* inside the component so PT-BR text shows up.
 const SPECIALTIES = [
   "Portrait", "Fashion", "Editorial", "Street", "Boudoir",
   "Commercial", "Lifestyle", "Fine Art", "Fitness", "Beauty",
   "Conceptual", "Events", "Couples", "Maternity",
-];
-
-const EXPERIENCE_LEVELS = [
-  { label: "All Levels", value: "" },
-  { label: "Beginner", value: "newcomer" },
-  { label: "Intermediate", value: "rising" },
-  { label: "Advanced", value: "established" },
-  { label: "Professional", value: "elite" },
-];
-
-const SORT_OPTIONS = [
-  { label: "Highest Rated", value: "rating" },
-  { label: "Recently Active", value: "active" },
-  { label: "Newest", value: "newest" },
 ];
 
 interface ProfileCard {
@@ -67,6 +50,26 @@ export default function Discover() {
   const { isDesktop } = useDevice();
   const t = useTranslation();
   const brand = useBrand();
+
+  const ROLE_FILTERS = [
+    { label: t.discover.all, value: "" },
+    { label: t.discover.photographers, value: "photographer" },
+    { label: t.discover.models, value: "model" },
+  ];
+
+  const EXPERIENCE_LEVELS = [
+    { label: t.discover.allLevels, value: "" },
+    { label: t.discover.beginner, value: "newcomer" },
+    { label: t.discover.intermediate, value: "rising" },
+    { label: t.discover.advanced, value: "established" },
+    { label: t.discover.professional, value: "elite" },
+  ];
+
+  const SORT_OPTIONS = [
+    { label: t.discover.highestRated, value: "rating" },
+    { label: t.discover.recentlyActive, value: "active" },
+    { label: t.discover.newest, value: "newest" },
+  ];
   const [searchParams] = useSearchParams();
   const [discoverTab, setDiscoverTab] = useState<"creatives" | "castings">("creatives");
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
@@ -250,7 +253,7 @@ export default function Discover() {
       const { data, error, count } = await query;
 
       if (error) {
-        toast.error("Failed to load profiles");
+        toast.error(t.discover.loadProfilesFailed);
         setLoading(false);
         setLoadingMore(false);
         return;
@@ -376,7 +379,7 @@ export default function Discover() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title={`Discover Creatives — ${brand.name}`} description="Browse photographers and models near you for TFP collaborations." />
+      <SEOHead title={t.discover.seoTitle(brand.name)} description={t.discover.seoDescription} />
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-xl border-b border-border">
         {/* Top bar */}
         <div className="flex items-center justify-between px-4 py-3">
@@ -583,7 +586,7 @@ export default function Discover() {
                     <div className="flex items-center justify-between mb-2">
                       <p className="font-body text-xs text-muted-foreground">{t.discover.distance}</p>
                       <span className="font-body text-xs text-foreground">
-                        {maxDistance ? `${maxDistance} mi` : 'Any'}
+                        {maxDistance ? `${maxDistance} ${t.discover.distanceUnit}` : t.discover.distanceAny}
                       </span>
                     </div>
                     <input
@@ -596,8 +599,8 @@ export default function Discover() {
                       className="w-full accent-primary"
                     />
                     <div className="flex justify-between text-[10px] font-body text-muted-foreground mt-1">
-                      <span>5 mi</span>
-                      <span>100 mi</span>
+                      <span>5 {t.discover.distanceUnit}</span>
+                      <span>100 {t.discover.distanceUnit}</span>
                     </div>
                     {maxDistance && (
                       <button onClick={() => setMaxDistance(null)} className="text-xs text-primary hover:underline mt-1 font-body">
@@ -664,7 +667,7 @@ export default function Discover() {
                     <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full border-2 border-background animate-pulse" />
                   </div>
                   <p className="font-body text-xs font-semibold text-foreground mt-2 truncate">{p.name}</p>
-                  <p className="font-body text-[10px] text-muted-foreground truncate">{p.city || "Unknown"}</p>
+                  <p className="font-body text-[10px] text-muted-foreground truncate">{p.city || t.common.unknown}</p>
                   {p.availability_note && (
                     <p className="font-body text-[9px] text-green-400 mt-1 line-clamp-2">{p.availability_note}</p>
                   )}
@@ -684,7 +687,7 @@ export default function Discover() {
               <h3 className="font-heading text-sm font-bold text-foreground">{t.common.filter}</h3>
 
               <div>
-                <label className="text-xs font-body text-muted-foreground mb-2 block">Type</label>
+                <label className="text-xs font-body text-muted-foreground mb-2 block">{t.searchPage.type}</label>
                 <div className="space-y-1">
                   {ROLE_FILTERS.map((f) => (
                     <button
@@ -701,7 +704,7 @@ export default function Discover() {
               </div>
 
               <div>
-                <label className="text-xs font-body text-muted-foreground mb-2 block">Styles</label>
+                <label className="text-xs font-body text-muted-foreground mb-2 block">{t.discover.specialties}</label>
                 <div className="flex flex-wrap gap-1">
                   {SPECIALTIES.slice(0, 8).map((s) => (
                     <button
@@ -718,7 +721,7 @@ export default function Discover() {
               </div>
 
               <div>
-                <label className="text-xs font-body text-muted-foreground mb-2 block">Experience</label>
+                <label className="text-xs font-body text-muted-foreground mb-2 block">{t.discover.experienceLevel}</label>
                 <div className="space-y-1">
                   {EXPERIENCE_LEVELS.map((l) => (
                     <button
@@ -735,7 +738,7 @@ export default function Discover() {
               </div>
 
               <div>
-                <label className="text-xs font-body text-muted-foreground mb-2 block">Sort By</label>
+                <label className="text-xs font-body text-muted-foreground mb-2 block">{t.discover.sortBy}</label>
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
@@ -749,7 +752,7 @@ export default function Discover() {
 
               {hasActiveFilters && (
                 <button onClick={clearAll} className="font-body text-xs text-primary hover:underline">
-                  Clear all filters
+                  {t.discover.clearAllFilters}
                 </button>
               )}
             </div>
@@ -801,15 +804,15 @@ export default function Discover() {
             {profile?.plan === "free" && profiles.length >= 20 && (
               <div className="text-center py-8 px-4">
                 <Lock className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <p className="font-heading text-sm font-bold text-foreground mb-1">Want to see more?</p>
+                <p className="font-heading text-sm font-bold text-foreground mb-1">{t.discover.seeMoreTitle}</p>
                 <p className="font-body text-xs text-muted-foreground mb-3">
-                  PRO members get priority in search results and unlimited scrolling
+                  {t.discover.seeMoreBody}
                 </p>
                 <button
                   onClick={() => navigate("/pro")}
                   className="px-6 py-2.5 rounded-xl gold-gradient text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
                 >
-                  Upgrade to PRO
+                  {t.discover.upgradeToPro}
                 </button>
               </div>
             )}
@@ -845,6 +848,7 @@ function ProfileCardComponent({
   onClick: () => void;
   distance: number | null;
 }) {
+  const t = useTranslation();
   const imgSrc = profile.cover_url || profile.avatar_url || null;
 
   return (
@@ -868,7 +872,7 @@ function ProfileCardComponent({
         {profile.available_now && profile.available_until && new Date(profile.available_until) > new Date() && (
           <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full bg-green-500/90 backdrop-blur-sm flex items-center gap-1">
             <Zap className="w-3 h-3 text-primary-foreground" />
-            <span className="text-[9px] font-body font-bold text-primary-foreground">AVAILABLE</span>
+            <span className="text-[9px] font-body font-bold text-primary-foreground">{t.discover.availableBadge}</span>
           </div>
         )}
 
@@ -887,13 +891,13 @@ function ProfileCardComponent({
           <div className="flex items-center gap-2 mb-0.5">
             <p className="text-foreground font-bold text-sm font-heading">{profile.name}</p>
             <span className="text-[9px] px-1.5 py-px rounded-md bg-foreground/10 backdrop-blur-sm text-foreground/70 font-body font-medium uppercase tracking-wide">
-              {profile.role === "dual" ? "Both" : profile.role}
+              {profile.role === "dual" ? t.discover.bothLabel : profile.role}
             </span>
           </div>
           <p className="text-muted-foreground text-xs font-body mt-0.5 flex items-center gap-1">
-            <MapPin className="w-3 h-3" /> {profile.city || "Unknown"}{profile.state ? `, ${profile.state}` : ""}
+            <MapPin className="w-3 h-3" /> {profile.city || t.common.unknown}{profile.state ? `, ${profile.state}` : ""}
             {distance !== null && (
-              <span className="text-primary font-medium">· {distance} mi</span>
+              <span className="text-primary font-medium">· {distance} {t.discover.distanceUnit}</span>
             )}
           </p>
           <div className="flex items-center gap-1 mt-1">

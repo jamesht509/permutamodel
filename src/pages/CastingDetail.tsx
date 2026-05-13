@@ -3,11 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MapPin, Clock, Users, Calendar, Pencil, Trash2, Star, X, Upload, Image, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import ApplyModal from "@/components/castings/ApplyModal";
 import ApplicationsModal from "@/components/castings/ApplicationsModal";
 
+// FASE 6 BR vocab — domain vocabulary, decision pending.
 const STYLES = ["Portrait", "Fashion", "Lifestyle", "Editorial", "Boudoir", "Fine Art", "Fitness", "Commercial", "Street", "Conceptual", "Beauty", "Couples"];
 const DURATION_OPTIONS = ["1h", "2h", "3h", "4h+", "Half Day", "Full Day"];
 
@@ -35,20 +37,20 @@ interface CastingFull {
   hasApplied: boolean;
 }
 
-function timeAgo(d: string | null): string {
-  if (!d) return "";
-  const diff = Date.now() - new Date(d).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
-
 export default function CastingDetail() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const t = useTranslation();
   const navigate = useNavigate();
+
+  const timeAgo = (d: string | null): string => {
+    if (!d) return "";
+    const diff = Date.now() - new Date(d).getTime();
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(mins / 60);
+    const days = Math.floor(hours / 24);
+    return t.castingsPage.timeAgo(mins, hours, days);
+  };
   const [casting, setCasting] = useState<CastingFull | null>(null);
   const [loading, setLoading] = useState(true);
   const [showApply, setShowApply] = useState(false);
@@ -111,7 +113,7 @@ export default function CastingDetail() {
     if (!files || !user) return;
     setUploading(true);
     for (const file of Array.from(files).slice(0, 5 - editMoodboard.length)) {
-      if (file.size > 5 * 1024 * 1024) { toast.error("Max 5MB"); continue; }
+      if (file.size > 5 * 1024 * 1024) { toast.error(t.validation.maxFileSize(5)); continue; }
       const path = `${user.id}/${crypto.randomUUID()}.${file.name.split(".").pop()}`;
       const { error } = await supabase.storage.from("portfolios").upload(path, file);
       if (!error) {
@@ -137,7 +139,7 @@ export default function CastingDetail() {
     }).eq("id", casting.id);
 
     if (error) toast.error(error.message);
-    else { toast.success("Casting updated!"); setEditing(false); fetchCasting(); }
+    else { toast.success(t.castingDetail.updated); setEditing(false); fetchCasting(); }
     setSaving(false);
   };
 
@@ -148,7 +150,7 @@ export default function CastingDetail() {
     await supabase.from("applications").delete().eq("casting_id", casting.id);
     const { error } = await supabase.from("casting_calls").delete().eq("id", casting.id);
     if (error) { toast.error(error.message); setDeleting(false); return; }
-    toast.success("Casting deleted");
+    toast.success(t.castingDetail.deleted);
     navigate("/castings");
   };
 
@@ -156,7 +158,7 @@ export default function CastingDetail() {
     if (!casting) return;
     const { error } = await supabase.from("casting_calls").update({ status: "cancelled" as any }).eq("id", casting.id);
     if (error) toast.error(error.message);
-    else { toast.success("Casting cancelled"); fetchCasting(); }
+    else { toast.success(t.castingDetail.cancelled); fetchCasting(); }
   };
 
   const chipClass = (active: boolean) => cn(
@@ -193,7 +195,7 @@ export default function CastingDetail() {
         </button>
         <h1 className="font-heading text-lg font-bold text-foreground flex-1 truncate">{casting.title}</h1>
         <span className={`px-3 py-1 rounded-full text-xs font-body font-semibold ${STATUS_STYLE[casting.status] || STATUS_STYLE.expired}`}>
-          {casting.status}
+          {casting.status === "open" ? t.castings.open : casting.status === "filled" ? t.castings.filled : casting.status === "expired" ? t.castings.expired : casting.status}
         </span>
       </div>
 
@@ -221,15 +223,15 @@ export default function CastingDetail() {
         {editing ? (
           <div className="space-y-4 bg-card/40 border border-border rounded-2xl p-4">
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-1">Title</label>
+              <label className="block text-xs font-body text-muted-foreground mb-1">{t.castingDetail.titleLabel}</label>
               <input value={editTitle} onChange={(e) => setEditTitle(e.target.value.slice(0, 80))} className={inputClass} />
             </div>
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-1">Description</label>
+              <label className="block text-xs font-body text-muted-foreground mb-1">{t.castingDetail.descriptionLabel}</label>
               <textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value.slice(0, 500))} rows={3} className={cn(inputClass, "resize-none")} />
             </div>
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-2">Styles</label>
+              <label className="block text-xs font-body text-muted-foreground mb-2">{t.castingDetail.stylesLabel}</label>
               <div className="flex flex-wrap gap-2">
                 {STYLES.map((s) => (
                   <button key={s} onClick={() => setEditStyles(editStyles.includes(s) ? editStyles.filter(x => x !== s) : [...editStyles, s])} className={chipClass(editStyles.includes(s))}>{s}</button>
@@ -237,11 +239,11 @@ export default function CastingDetail() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-1">Location</label>
+              <label className="block text-xs font-body text-muted-foreground mb-1">{t.castingDetail.locationLabel}</label>
               <input value={editLocation} onChange={(e) => setEditLocation(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-1">Slots</label>
+              <label className="block text-xs font-body text-muted-foreground mb-1">{t.castingDetail.slotsLabel}</label>
               <div className="flex items-center gap-3">
                 <button onClick={() => setEditSlots(Math.max(1, editSlots - 1))} className="w-10 h-10 rounded-xl border border-border text-foreground flex items-center justify-center">−</button>
                 <span className="text-lg font-heading font-bold text-foreground w-8 text-center">{editSlots}</span>
@@ -249,7 +251,7 @@ export default function CastingDetail() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-1">Duration</label>
+              <label className="block text-xs font-body text-muted-foreground mb-1">{t.castingDetail.durationLabel}</label>
               <div className="flex flex-wrap gap-2">
                 {DURATION_OPTIONS.map((d) => (
                   <button key={d} onClick={() => setEditDuration(editDuration === d ? "" : d)} className={chipClass(editDuration === d)}>{d}</button>
@@ -258,7 +260,7 @@ export default function CastingDetail() {
             </div>
             <div>
               <label className="block text-xs font-body text-muted-foreground mb-1 flex items-center gap-1">
-                <Image className="w-3 h-3" /> Moodboard ({editMoodboard.length}/5)
+                <Image className="w-3 h-3" /> {t.castingDetail.moodboardLabel} ({editMoodboard.length}/5)
               </label>
               <div className="flex gap-2 flex-wrap">
                 {editMoodboard.map((url, i) => (
@@ -278,13 +280,13 @@ export default function CastingDetail() {
               <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => uploadMoodboard(e.target.files)} />
             </div>
             <div>
-              <label className="block text-xs font-body text-muted-foreground mb-1">Requirements</label>
+              <label className="block text-xs font-body text-muted-foreground mb-1">{t.castingDetail.requirementsLabel}</label>
               <textarea value={editRequirements} onChange={(e) => setEditRequirements(e.target.value)} rows={2} className={cn(inputClass, "resize-none")} />
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setEditing(false)} className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-body font-semibold text-sm">Cancel</button>
+              <button onClick={() => setEditing(false)} className="flex-1 py-3 rounded-xl border border-border text-muted-foreground font-body font-semibold text-sm">{t.common.cancel}</button>
               <button onClick={handleSave} disabled={saving} className="flex-1 py-3 rounded-xl gold-gradient text-primary-foreground font-body font-semibold text-sm disabled:opacity-50">
-                {saving ? "Saving..." : "Save Changes"}
+                {saving ? t.settings.saving : t.common.saveChanges}
               </button>
             </div>
           </div>
@@ -300,37 +302,37 @@ export default function CastingDetail() {
             <div className="grid grid-cols-2 gap-3">
               {casting.proposed_date && (
                 <div className="bg-card/40 border border-border rounded-xl p-3">
-                  <div className="flex items-center gap-1.5 text-primary mb-1"><Calendar className="w-4 h-4" /><span className="text-xs font-body font-semibold">Date</span></div>
-                  <p className="text-sm font-body text-foreground">{casting.is_flexible_date ? "Flexible" : casting.proposed_date}</p>
+                  <div className="flex items-center gap-1.5 text-primary mb-1"><Calendar className="w-4 h-4" /><span className="text-xs font-body font-semibold">{t.castingDetail.date}</span></div>
+                  <p className="text-sm font-body text-foreground">{casting.is_flexible_date ? t.castings.flexible : casting.proposed_date}</p>
                   {casting.proposed_time && <p className="text-xs text-muted-foreground font-body">{casting.proposed_time}</p>}
                 </div>
               )}
               {casting.location && (
                 <div className="bg-card/40 border border-border rounded-xl p-3">
-                  <div className="flex items-center gap-1.5 text-primary mb-1"><MapPin className="w-4 h-4" /><span className="text-xs font-body font-semibold">Location</span></div>
+                  <div className="flex items-center gap-1.5 text-primary mb-1"><MapPin className="w-4 h-4" /><span className="text-xs font-body font-semibold">{t.castingDetail.location}</span></div>
                   <p className="text-sm font-body text-foreground">{casting.location}</p>
-                  <p className="text-xs text-muted-foreground font-body">{casting.is_indoor ? "Indoor" : "Outdoor"}</p>
+                  <p className="text-xs text-muted-foreground font-body">{casting.is_indoor ? t.castingDetail.indoor : t.castingDetail.outdoor}</p>
                 </div>
               )}
               {casting.duration && (
                 <div className="bg-card/40 border border-border rounded-xl p-3">
-                  <div className="flex items-center gap-1.5 text-primary mb-1"><Clock className="w-4 h-4" /><span className="text-xs font-body font-semibold">Duration</span></div>
+                  <div className="flex items-center gap-1.5 text-primary mb-1"><Clock className="w-4 h-4" /><span className="text-xs font-body font-semibold">{t.castingDetail.duration}</span></div>
                   <p className="text-sm font-body text-foreground">{casting.duration}</p>
                 </div>
               )}
               <div className="bg-card/40 border border-border rounded-xl p-3">
-                <div className="flex items-center gap-1.5 text-primary mb-1"><Users className="w-4 h-4" /><span className="text-xs font-body font-semibold">Slots</span></div>
-                <p className="text-sm font-body text-foreground">{casting.filled_slots || 0}/{casting.slots} filled</p>
+                <div className="flex items-center gap-1.5 text-primary mb-1"><Users className="w-4 h-4" /><span className="text-xs font-body font-semibold">{t.castingDetail.slots}</span></div>
+                <p className="text-sm font-body text-foreground">{t.castingsPage.filledLabel(casting.filled_slots || 0, casting.slots)}</p>
               </div>
             </div>
 
             {/* Type needed */}
             {casting.type_needed.length > 0 && (
               <div>
-                <p className="text-xs font-body text-muted-foreground mb-2">Looking for</p>
+                <p className="text-xs font-body text-muted-foreground mb-2">{t.castingDetail.lookingFor}</p>
                 <div className="flex flex-wrap gap-2">
-                  {casting.type_needed.map((t) => (
-                    <span key={t} className="px-3 py-1.5 rounded-full text-xs font-body font-medium bg-secondary/15 text-secondary">{t}</span>
+                  {casting.type_needed.map((tn) => (
+                    <span key={tn} className="px-3 py-1.5 rounded-full text-xs font-body font-medium bg-secondary/15 text-secondary">{tn}</span>
                   ))}
                 </div>
               </div>
@@ -339,7 +341,7 @@ export default function CastingDetail() {
             {/* Styles */}
             {casting.styles.length > 0 && (
               <div>
-                <p className="text-xs font-body text-muted-foreground mb-2">Styles</p>
+                <p className="text-xs font-body text-muted-foreground mb-2">{t.castingDetail.styles}</p>
                 <div className="flex flex-wrap gap-2">
                   {casting.styles.map((s) => (
                     <span key={s} className="px-3 py-1.5 rounded-full text-xs font-body font-medium bg-primary/10 text-primary">{s}</span>
@@ -351,7 +353,7 @@ export default function CastingDetail() {
             {/* Requirements */}
             {casting.requirements && (
               <div className="bg-card/40 border border-border rounded-xl p-4">
-                <div className="flex items-center gap-1.5 text-primary mb-2"><Sparkles className="w-4 h-4" /><span className="text-xs font-body font-semibold">Requirements</span></div>
+                <div className="flex items-center gap-1.5 text-primary mb-2"><Sparkles className="w-4 h-4" /><span className="text-xs font-body font-semibold">{t.castingDetail.requirements}</span></div>
                 <p className="text-sm font-body text-muted-foreground">{casting.requirements}</p>
               </div>
             )}
@@ -359,7 +361,7 @@ export default function CastingDetail() {
             {/* Moodboard */}
             {casting.moodboard_urls && casting.moodboard_urls.length > 0 && (
               <div>
-                <p className="text-xs font-body text-muted-foreground mb-2">Moodboard</p>
+                <p className="text-xs font-body text-muted-foreground mb-2">{t.castingDetail.moodboard}</p>
                 <div className="grid grid-cols-3 gap-2">
                   {casting.moodboard_urls.map((url, i) => (
                     <img key={i} src={url} alt="" className="w-full aspect-square rounded-xl object-cover" />
@@ -372,15 +374,15 @@ export default function CastingDetail() {
             {isOwner && (
               <div className="space-y-2">
                 <button onClick={() => setShowApps(true)} className="w-full py-3 bg-card border border-border text-foreground text-sm font-body font-semibold rounded-xl hover:bg-card/80 transition-colors">
-                  View Applications ({casting.applicationCount})
+                  {t.castingDetail.viewApplications(casting.applicationCount)}
                 </button>
                 <div className="flex gap-2">
                   <button onClick={startEdit} className="flex-1 py-3 rounded-xl border border-border text-foreground text-sm font-body font-semibold flex items-center justify-center gap-2 hover:bg-card/50 transition-colors">
-                    <Pencil className="w-4 h-4" /> Edit
+                    <Pencil className="w-4 h-4" /> {t.common.edit}
                   </button>
                   {casting.status === "open" && (
                     <button onClick={handleCancel} className="flex-1 py-3 rounded-xl border border-destructive/30 text-destructive text-sm font-body font-semibold hover:bg-destructive/10 transition-colors">
-                      Cancel Casting
+                      {t.castingDetail.cancelCasting}
                     </button>
                   )}
                   <button onClick={handleDelete} disabled={deleting} className="py-3 px-4 rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
@@ -395,11 +397,11 @@ export default function CastingDetail() {
               <>
                 {casting.hasApplied ? (
                   <button disabled className="w-full py-3 bg-card border border-border text-muted-foreground text-sm font-body font-semibold rounded-xl opacity-60">
-                    Applied ✓
+                    {t.castingDetail.appliedBadge}
                   </button>
                 ) : casting.status === "open" ? (
                   <button onClick={() => setShowApply(true)} className="w-full py-3 bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-body font-semibold rounded-xl hover:scale-[1.01] active:scale-[0.99] transition-transform">
-                    Apply Now ({casting.applicationCount} applied)
+                    {t.castingDetail.applyNowWithCount(casting.applicationCount)}
                   </button>
                 ) : null}
               </>

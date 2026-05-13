@@ -3,10 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, X, Camera, MapPin, Loader } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/hooks/useTranslation";
 import { toast } from "sonner";
 import { getCurrentLocation, reverseGeocode, geocodeAddress } from "@/lib/geocoding";
 import PortfolioUploader from "@/components/portfolio/PortfolioUploader";
 
+// FASE 6 BR vocab — role / style / day / time labels stay in EN for now;
+// BR taxonomy + km/mi unit decision pending. Values written to DB remain
+// English-keyed (role enum, day strings) so a label-only swap is safe later.
 const ROLE_OPTIONS = [
   { value: "photographer", label: "📸 Photographer" },
   { value: "model", label: "🌟 Model" },
@@ -33,6 +37,7 @@ interface PhotoItem {
 
 export default function EditProfile() {
   const { user, profile, refreshProfile } = useAuth();
+  const t = useTranslation();
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
   const avatarRef = useRef<HTMLInputElement>(null);
@@ -110,7 +115,7 @@ export default function EditProfile() {
     const ext = file.name.split(".").pop();
     const path = `${user.id}/avatar.${ext}`;
     const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    if (error) { toast.error("Failed to upload avatar"); return; }
+    if (error) { toast.error(t.editProfile.avatarUploadFailed); return; }
     const { data } = supabase.storage.from("avatars").getPublicUrl(path);
     const urlWithCacheBust = `${data.publicUrl}?t=${Date.now()}`;
     setAvatarUrl(urlWithCacheBust);
@@ -122,7 +127,7 @@ export default function EditProfile() {
     setDetectingLocation(true);
     const coords = await getCurrentLocation();
     if (!coords) {
-      toast.error("Couldn't detect location. Enter manually.");
+      toast.error(t.editProfile.locationDetectFailed);
       setDetectingLocation(false);
       return;
     }
@@ -136,7 +141,7 @@ export default function EditProfile() {
         city: locationData.city,
         state: locationData.state,
       }).eq("id", user.id);
-      toast.success(`Location updated: ${locationData.city}, ${locationData.state}`);
+      toast.success(t.editProfile.locationUpdated(locationData.city, locationData.state));
       markChanged();
     }
     setDetectingLocation(false);
@@ -149,7 +154,7 @@ export default function EditProfile() {
 
   const handleSave = async () => {
     if (!user) return;
-    if (!name.trim()) { toast.error("Name is required"); return; }
+    if (!name.trim()) { toast.error(t.editProfile.nameRequired); return; }
     setSaving(true);
 
     try {
@@ -216,11 +221,11 @@ export default function EditProfile() {
       }
 
       await refreshProfile();
-      toast.success("Profile updated!");
+      toast.success(t.editProfile.saved);
       setHasChanges(false);
       navigate("/profile");
     } catch (err: any) {
-      toast.error(err.message || "Failed to save");
+      toast.error(err.message || t.editProfile.saveFailed);
     } finally {
       setSaving(false);
     }
@@ -253,7 +258,7 @@ export default function EditProfile() {
         <button onClick={() => navigate(-1)} className="p-1">
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
-        <h1 className="font-heading text-lg font-bold text-foreground">Edit Profile</h1>
+        <h1 className="font-heading text-lg font-bold text-foreground">{t.editProfile.title}</h1>
       </div>
 
       <div className="px-4 py-5 space-y-6">
@@ -275,14 +280,14 @@ export default function EditProfile() {
             </div>
           </div>
           <input ref={avatarRef} type="file" accept="image/*" className="hidden" onChange={(e) => { if (e.target.files?.[0]) uploadAvatar(e.target.files[0]); }} />
-          <p className="text-xs font-body text-muted-foreground mt-2">Tap to change avatar</p>
+          <p className="text-xs font-body text-muted-foreground mt-2">{t.editProfile.tapToChangeAvatar}</p>
         </div>
 
         {/* Basic Info */}
-        {renderField("Name", name, setName, "Your name")}
+        {renderField(t.editProfile.nameLabel, name, setName, t.editProfile.namePlaceholder)}
 
         <div>
-          <label className="text-xs font-body text-muted-foreground mb-1.5 block">Role</label>
+          <label className="text-xs font-body text-muted-foreground mb-1.5 block">{t.editProfile.roleLabel}</label>
           <div className="grid grid-cols-2 gap-2">
             {ROLE_OPTIONS.map((r) => (
               <button
@@ -300,7 +305,7 @@ export default function EditProfile() {
           </div>
         </div>
 
-        {renderField("Bio", bio, setBio, "Tell people about yourself...", true)}
+        {renderField(t.editProfile.bioLabel, bio, setBio, t.editProfile.bioPlaceholder, true)}
 
         {/* Location */}
         <div>
@@ -313,27 +318,27 @@ export default function EditProfile() {
             {detectingLocation ? (
               <>
                 <Loader className="w-4 h-4 animate-spin" />
-                Detecting location...
+                {t.editProfile.detectingLocation}
               </>
             ) : (
               <>
                 <MapPin className="w-4 h-4" />
-                Update My Location
+                {t.editProfile.updateMyLocation}
               </>
             )}
           </button>
           <div className="grid grid-cols-2 gap-3">
-            {renderField("City", city, setCity, "Worcester")}
-            {renderField("State", state, setState, "MA")}
+            {renderField(t.editProfile.cityLabel, city, setCity, t.editProfile.cityPlaceholder)}
+            {renderField(t.editProfile.stateLabel, state, setState, t.editProfile.statePlaceholder)}
           </div>
         </div>
 
-        {renderField("Instagram", instagram, setInstagram, "@username")}
-        {renderField("Website", website, setWebsite, "https://...")}
+        {renderField(t.editProfile.instagramLabel, instagram, setInstagram, "@username")}
+        {renderField(t.editProfile.websiteLabel, website, setWebsite, "https://...")}
 
         {/* Styles */}
         <div>
-          <label className="text-xs font-body text-muted-foreground mb-1.5 block">Styles (up to 5)</label>
+          <label className="text-xs font-body text-muted-foreground mb-1.5 block">{t.editProfile.stylesLabelMax(5)}</label>
           <div className="flex flex-wrap gap-1.5">
             {STYLE_OPTIONS.map((s) => (
               <button
@@ -354,16 +359,16 @@ export default function EditProfile() {
         {/* Equipment */}
         {(role === "photographer" || role === "dual") && (
           <div>
-            <label className="text-xs font-body text-muted-foreground mb-1.5 block">Equipment</label>
+            <label className="text-xs font-body text-muted-foreground mb-1.5 block">{t.editProfile.equipmentLabel}</label>
             <div className="flex gap-2 mb-2">
               <input
                 value={equipmentInput}
                 onChange={(e) => setEquipmentInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addEquipment()}
-                placeholder="Add equipment..."
+                placeholder={t.editProfile.equipmentPlaceholder}
                 className="flex-1 bg-background border border-border rounded-xl px-3 py-2 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />
-              <button onClick={addEquipment} className="px-3 py-2 rounded-xl bg-primary/10 text-primary text-sm font-body font-medium">Add</button>
+              <button onClick={addEquipment} className="px-3 py-2 rounded-xl bg-primary/10 text-primary text-sm font-body font-medium">{t.editProfile.addBtn}</button>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {equipment.map((item) => (
@@ -381,7 +386,7 @@ export default function EditProfile() {
         {/* Measurements (models) */}
         {(role === "model" || role === "dual") && (
           <div>
-            <label className="text-xs font-body text-muted-foreground mb-1.5 block">Measurements</label>
+            <label className="text-xs font-body text-muted-foreground mb-1.5 block">{t.editProfile.measurementsLabel}</label>
             <div className="grid grid-cols-2 gap-2">
               {["height", "weight", "bust", "waist", "hips", "shoe_size", "hair_color", "eye_color"].map((key) => (
                 <input
@@ -398,7 +403,7 @@ export default function EditProfile() {
 
         {/* Studio */}
         <div className="flex items-center justify-between">
-          <span className="font-body text-sm text-foreground">Has Studio</span>
+          <span className="font-body text-sm text-foreground">{t.editProfile.hasStudio}</span>
           <button
             onClick={() => { setHasStudio(!hasStudio); markChanged(); }}
             className={`w-11 h-6 rounded-full transition-colors relative ${hasStudio ? "bg-primary" : "bg-muted"}`}
@@ -411,7 +416,7 @@ export default function EditProfile() {
 
         {/* Availability */}
         <div>
-          <label className="text-xs font-body text-muted-foreground mb-1.5 block">Available Days</label>
+          <label className="text-xs font-body text-muted-foreground mb-1.5 block">{t.editProfile.availableDays}</label>
           <div className="flex gap-1.5 mb-3">
             {DAYS.map((day) => (
               <button
@@ -427,7 +432,7 @@ export default function EditProfile() {
               </button>
             ))}
           </div>
-          <label className="text-xs font-body text-muted-foreground mb-1.5 block">Time Preferences</label>
+          <label className="text-xs font-body text-muted-foreground mb-1.5 block">{t.editProfile.timePreferences}</label>
           <div className="flex flex-wrap gap-1.5 mb-3">
             {TIMES.map((t) => (
               <button
@@ -444,7 +449,7 @@ export default function EditProfile() {
             ))}
           </div>
           <div>
-            <label className="text-xs font-body text-muted-foreground mb-1 block">Travel Radius: {distanceRadius} mi</label>
+            <label className="text-xs font-body text-muted-foreground mb-1 block">{t.editProfile.travelRadius(distanceRadius, "mi")}</label>
             <input
               type="range"
               min={5}
@@ -476,7 +481,7 @@ export default function EditProfile() {
             disabled={saving}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-body font-semibold text-base disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99] transition-transform"
           >
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? t.settings.saving : t.common.saveChanges}
           </button>
         </div>
       )}

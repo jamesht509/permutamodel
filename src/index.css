@@ -3,90 +3,84 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 40 18% 95%;
-    --foreground: 30 10% 15%;
-
-    --card: 40 20% 99%;
-    --card-foreground: 30 10% 15%;
-
-    --popover: 40 20% 99%;
-    --popover-foreground: 30 10% 15%;
-
-    --primary: 37 55% 42%;
-    --primary-foreground: 40 20% 97%;
-
-    --secondary: 37 35% 82%;
-    --secondary-foreground: 30 10% 15%;
-
-    --muted: 37 15% 90%;
-    --muted-foreground: 30 8% 45%;
-
-    --accent: 37 55% 42%;
-    --accent-foreground: 40 20% 97%;
-
-    --destructive: 0 65% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 134 40% 38%;
-    --warning: 38 92% 50%;
-
-    --border: 37 25% 82%;
-    --input: 37 25% 82%;
-    --ring: 37 55% 42%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 40 20% 99%;
-    --sidebar-foreground: 30 10% 15%;
-    --sidebar-primary: 37 55% 42%;
-    --sidebar-primary-foreground: 40 20% 97%;
-    --sidebar-accent: 37 55% 42% / 0.1;
-    --sidebar-accent-foreground: 30 10% 15%;
-    --sidebar-border: 37 25% 82%;
-    --sidebar-ring: 37 55% 42%;
-  }
-
+  /*
+   * Paleta B — PermutaModel (dark-first, single theme in v1).
+   * :root and .dark share the same values; the app forces .dark on <html>.
+   * Reference (hex → HSL):
+   *   #14101F bg-base     → 256 32% 9%
+   *   #1F1A2E bg-surface  → 255 28% 14%
+   *   #2A2440 bg-elevated → 253 28% 20%
+   *   #F4F0FF text-primary→ 256 100% 97%
+   *   #A8A2BD text-second → 253 17% 69%
+   *   #6F6986 text-tert   → 253 12% 47%
+   *   #FF6B4A coral       → 11 100% 65%
+   *   #C9B4FF lavender    → 257 100% 85%
+   *   #4ADE80 success     → 142 69% 58%
+   *   #F87171 danger      → 0 91% 71%
+   *   #EF9F27 warning     → 36 87% 55%
+   *   #2D2640 border      → 256 25% 20%
+   *   #3D3556 border-stg  → 256 24% 27%
+   * Text on coral: #1A0A05 → 14 68% 6%
+   * Text on lavender: #2D1F5C → 254 50% 24%
+   */
+  :root,
   .dark {
-    --background: 240 7% 4%;
-    --foreground: 36 20% 93%;
+    /* Paleta B direct tokens */
+    --bg-base: 256 32% 9%;
+    --bg-surface: 255 28% 14%;
+    --bg-elevated: 253 28% 20%;
+    --text-primary: 256 100% 97%;
+    --text-secondary: 253 17% 69%;
+    --text-tertiary: 253 12% 47%;
+    --accent-warm: 11 100% 65%;
+    --accent-cool: 257 100% 85%;
+    --on-accent-warm: 14 68% 6%;
+    --on-accent-cool: 254 50% 24%;
+    --danger: 0 91% 71%;
+    --border-strong: 256 24% 27%;
 
-    --card: 240 7% 7%;
-    --card-foreground: 36 20% 93%;
+    /* shadcn primitive tokens remapped to Paleta B */
+    --background: var(--bg-base);
+    --foreground: var(--text-primary);
 
-    --popover: 240 7% 7%;
-    --popover-foreground: 36 20% 93%;
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
 
-    --primary: 37 42% 60%;
-    --primary-foreground: 240 7% 4%;
+    --popover: var(--bg-surface);
+    --popover-foreground: var(--text-primary);
 
-    --secondary: 37 30% 80%;
-    --secondary-foreground: 240 7% 4%;
+    --primary: var(--accent-warm);
+    --primary-foreground: var(--on-accent-warm);
 
-    --muted: 240 7% 9%;
-    --muted-foreground: 36 10% 53%;
+    --secondary: var(--accent-cool);
+    --secondary-foreground: var(--on-accent-cool);
 
-    --accent: 37 42% 60%;
-    --accent-foreground: 36 20% 93%;
+    --muted: var(--bg-elevated);
+    --muted-foreground: var(--text-secondary);
 
-    --destructive: 0 65% 64%;
-    --destructive-foreground: 0 0% 100%;
+    --accent: var(--bg-elevated);
+    --accent-foreground: var(--text-primary);
 
-    --success: 134 40% 50%;
-    --warning: 38 92% 50%;
+    --destructive: var(--danger);
+    --destructive-foreground: var(--text-primary);
 
-    --border: 37 30% 45% / 0.15;
-    --input: 37 30% 45% / 0.15;
-    --ring: 37 42% 60%;
+    --success: 142 69% 58%;
+    --warning: 36 87% 55%;
 
-    --sidebar-background: 240 7% 7%;
-    --sidebar-foreground: 36 20% 93%;
-    --sidebar-primary: 37 42% 60%;
-    --sidebar-primary-foreground: 240 7% 4%;
-    --sidebar-accent: 37 42% 60% / 0.1;
-    --sidebar-accent-foreground: 36 20% 93%;
-    --sidebar-border: 37 30% 45% / 0.15;
-    --sidebar-ring: 37 42% 60%;
+    --border: 256 25% 20%;
+    --input: 256 25% 20%;
+    --ring: var(--accent-warm);
+
+    --radius: 1rem;
+
+    --sidebar-background: var(--bg-surface);
+    --sidebar-foreground: var(--text-primary);
+    --sidebar-primary: var(--accent-warm);
+    --sidebar-primary-foreground: var(--on-accent-warm);
+    --sidebar-accent: var(--bg-elevated);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: 256 25% 20%;
+    --sidebar-ring: var(--accent-warm);
   }
 }
 
@@ -102,7 +96,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Prevent pull-to-refresh in PWA */
@@ -115,7 +110,9 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading;
+    font-family: "Sora", "Inter", sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   /* iOS INPUT ZOOM FIX: Safari zooms in when input font < 16px */
@@ -166,23 +163,16 @@
     padding-right: env(safe-area-inset-right, 0);
   }
 
-  .gold-gradient {
-    background: linear-gradient(135deg, hsl(37 55% 42%), hsl(37 45% 55%));
-  }
-
+  /* Legacy `gold-*` utility names retained for existing pages — repainted
+     with Paleta B coral→lavender gradient until Fase 3 migrates them. */
+  .gold-gradient,
   .dark .gold-gradient {
-    background: linear-gradient(135deg, hsl(37 42% 60%), hsl(37 30% 80%));
+    background: linear-gradient(135deg, hsl(var(--accent-warm)), hsl(var(--accent-cool)));
   }
 
-  .gold-text {
-    background: linear-gradient(135deg, hsl(37 55% 42%), hsl(37 45% 55%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
+  .gold-text,
   .dark .gold-text {
-    background: linear-gradient(135deg, hsl(37 42% 60%), hsl(37 30% 80%));
+    background: linear-gradient(135deg, hsl(var(--accent-warm)), hsl(var(--accent-cool)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -201,18 +191,21 @@
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+  ::-webkit-scrollbar-thumb,
   .dark ::-webkit-scrollbar-thumb {
-    background: hsl(37 30% 45% / 0.3);
+    background: hsl(var(--border-strong) / 0.5);
     border-radius: 3px;
   }
+  ::-webkit-scrollbar-thumb:hover,
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: hsl(37 30% 45% / 0.5);
+    background: hsl(var(--border-strong) / 0.8);
   }
 
-  /* Gold text selection */
+  /* Coral text selection */
+  ::selection,
   .dark ::selection {
-    background: hsl(37 42% 60% / 0.3);
-    color: hsl(36 20% 93%);
+    background: hsl(var(--accent-warm) / 0.3);
+    color: hsl(var(--text-primary));
   }
 
   /* Card hover glow utility */
@@ -220,8 +213,8 @@
     transition: all 0.3s ease;
   }
   .card-glow:hover {
-    border-color: hsl(37 42% 60% / 0.3);
-    box-shadow: 0 8px 32px hsl(37 42% 60% / 0.08);
+    border-color: hsl(var(--accent-warm) / 0.3);
+    box-shadow: 0 8px 32px hsl(var(--accent-warm) / 0.1);
   }
 
   @keyframes float-particle {

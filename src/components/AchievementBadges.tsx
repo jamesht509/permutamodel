@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { Trophy, Award, Zap, Star, Camera, Heart, Shield, Crown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "@/hooks/useTranslation";
 
-const ACHIEVEMENT_CONFIG: Record<string, { icon: typeof Trophy; label: string; description: string; color: string }> = {
-  first_session: { icon: Camera, label: "First Session", description: "Completed your first session", color: "text-primary" },
-  five_sessions: { icon: Zap, label: "5 Sessions", description: "Completed 5 sessions", color: "text-amber-400" },
-  ten_sessions: { icon: Award, label: "10 Sessions", description: "Completed 10 sessions", color: "text-orange-400" },
-  first_review: { icon: Star, label: "First Review", description: "Received your first review", color: "text-primary" },
-  five_star: { icon: Crown, label: "5-Star Rating", description: "Achieved a 5-star rating", color: "text-amber-400" },
-  top_rated: { icon: Trophy, label: "Top Rated", description: "Top rated in your area", color: "text-amber-400" },
-  verified: { icon: Shield, label: "Verified", description: "Identity verified", color: "text-green-400" },
-  popular: { icon: Heart, label: "Popular", description: "Favorited by 10+ users", color: "text-pink-400" },
+const ACHIEVEMENT_ICONS: Record<string, { icon: typeof Trophy; color: string }> = {
+  first_session: { icon: Camera, color: "text-primary" },
+  five_sessions: { icon: Zap, color: "text-amber-400" },
+  ten_sessions: { icon: Award, color: "text-orange-400" },
+  first_review: { icon: Star, color: "text-primary" },
+  five_star: { icon: Crown, color: "text-amber-400" },
+  top_rated: { icon: Trophy, color: "text-amber-400" },
+  verified: { icon: Shield, color: "text-green-400" },
+  popular: { icon: Heart, color: "text-pink-400" },
 };
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function AchievementBadges({ userId }: Props) {
+  const t = useTranslation();
   const [achievements, setAchievements] = useState<{ achievement_type: string; unlocked_at: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,24 +39,23 @@ export default function AchievementBadges({ userId }: Props) {
 
   return (
     <div className="mt-5">
-      <h3 className="font-heading text-sm font-semibold text-foreground mb-2">Achievements</h3>
+      <h3 className="font-heading text-sm font-semibold text-foreground mb-2">{t.achievements.title}</h3>
       <div className="flex flex-wrap gap-2">
         {achievements.map((a) => {
-          const config = ACHIEVEMENT_CONFIG[a.achievement_type] || {
-            icon: Trophy,
-            label: a.achievement_type.replace(/_/g, " "),
-            description: "",
-            color: "text-muted-foreground",
-          };
-          const Icon = config.icon;
+          const type = a.achievement_type as keyof typeof t.achievements.types;
+          const meta = t.achievements.types[type];
+          const visual = ACHIEVEMENT_ICONS[a.achievement_type] || { icon: Trophy, color: "text-muted-foreground" };
+          const Icon = visual.icon;
+          const label = meta?.label ?? a.achievement_type.replace(/_/g, " ");
+          const description = meta?.description ?? "";
           return (
             <div
               key={a.achievement_type}
               className="group relative flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-card/50 border border-border hover:border-primary/30 transition-colors cursor-default"
-              title={config.description}
+              title={description}
             >
-              <Icon className={`w-3.5 h-3.5 ${config.color}`} />
-              <span className="text-xs font-body font-medium text-foreground">{config.label}</span>
+              <Icon className={`w-3.5 h-3.5 ${visual.color}`} />
+              <span className="text-xs font-body font-medium text-foreground">{label}</span>
             </div>
           );
         })}
