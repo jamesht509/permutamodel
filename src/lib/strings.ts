@@ -1110,8 +1110,8 @@ export const PT_BR: Strings = {
     network: "Problema de conexão. Confere a internet e tenta de novo.",
     server: "Nosso servidor deu uma travada. Tenta de novo daqui a pouco.",
     notFound: "Não achamos isso.",
-    sessionExpired: "Tua sessão expirou. Entra de novo, por favor.",
-    permissionDenied: "Você não tem permissão pra fazer isso.",
+    sessionExpired: "Tua sessão expirou. Faz o login de novo.",
+    permissionDenied: "Tu não tem permissão pra isso.",
     unsupported: "Ainda não rola isso por aqui.",
   },
   validation: {
@@ -1123,7 +1123,7 @@ export const PT_BR: Strings = {
     maxFileSize: (mb) => `Limite de ${mb}MB`,
   },
   profileCompletion: {
-    title: "Perfil completo",
+    title: "Falta pouco pra terminar",
     completeCta: "Completar meu perfil",
     items: {
       avatar: "Foto de perfil",
@@ -1338,9 +1338,9 @@ export const PT_BR: Strings = {
     filled: "Preenchido",
     expired: "Expirado",
     apply: "Tô dentro",
-    applied: "Tô dentro",
+    applied: "Já tô dentro",
     manage: "Gerenciar",
-    applyNow: "Tô dentro",
+    applyNow: "Bora!",
     noCastings: "Nenhum trampo aberto",
     noCastingsSub: "Volta depois pra conferir novidades",
     slots: "vagas",
@@ -1378,8 +1378,8 @@ export const PT_BR: Strings = {
     application_accepted: ({ castingTitle }) => ({
       title: "Tá dentro! 🎉",
       body: castingTitle
-        ? `Você tá dentro de "${castingTitle}". Já criamos o ensaio.`
-        : "Sua candidatura foi aceita! Já criamos o ensaio.",
+        ? `Tu tá dentro de "${castingTitle}". Já criamos o ensaio.`
+        : "Tua candidatura foi aceita! Já criamos o ensaio.",
     }),
     application_declined: ({ castingTitle }) => ({
       title: "Não rolou dessa vez",
