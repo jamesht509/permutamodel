@@ -29,18 +29,18 @@ interface TfpRequest {
   receiver: { name: string; avatar_url: string | null } | null;
 }
 
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return "Good morning";
-  if (h < 18) return "Good afternoon";
-  return "Good evening";
-}
-
 export default function Dashboard() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { isDesktop } = useDevice();
   const t = useTranslation();
+
+  const getGreeting = (): string => {
+    const h = new Date().getHours();
+    if (h < 12) return t.discover.goodMorning;
+    if (h < 18) return t.discover.goodAfternoon;
+    return t.discover.goodEvening;
+  };
   const [requests, setRequests] = useState<TfpRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"received" | "sent">("received");
@@ -73,7 +73,7 @@ export default function Dashboard() {
       if (error) throw error;
       setRequests((data as any) || []);
     } catch {
-      toast.error("Failed to load requests");
+      toast.error(t.dashboard.loadFailed);
     }
     setLoading(false);
   };
@@ -92,7 +92,7 @@ export default function Dashboard() {
 
       // Find the request to get sender/receiver info
       const request = requests.find(r => r.id === id);
-      if (!request) { toast.success(`Request ${status}`); fetchRequests(); return; }
+      if (!request) { toast.success(t.dashboard.requestStatusFallback(status)); fetchRequests(); return; }
 
       const partnerId = request.sender_id === user.id ? request.receiver_id : request.sender_id;
       const partnerProfile = request.sender_id === user.id ? request.receiver : request.sender;
@@ -146,10 +146,10 @@ export default function Dashboard() {
         });
       }
 
-      toast.success(status === "accepted" ? "Request accepted! Session created 🎉" : "Request declined");
+      toast.success(status === "accepted" ? t.dashboard.acceptedWithSession : t.dashboard.declinedToast);
       fetchRequests();
     } catch {
-      toast.error("Failed to update request");
+      toast.error(t.dashboard.requestActionFailed);
     }
   };
 
@@ -169,7 +169,7 @@ export default function Dashboard() {
         })
         .select()
         .single();
-      if (error || !newSession) { toast.error("Failed to create session for review"); return; }
+      if (error || !newSession) { toast.error(t.dashboard.reviewSessionFailed); return; }
       sessionId = newSession.id;
       await supabase.from("tfp_requests").update({ session_id: sessionId }).eq("id", r.id);
     }
@@ -221,7 +221,7 @@ export default function Dashboard() {
               </button>
               <button onClick={() => navigate("/castings")} className="flex items-center gap-2 px-4 py-2.5 rounded-xl gold-gradient text-primary-foreground font-body text-sm font-semibold hover:opacity-90 transition-opacity">
                 <Megaphone className="w-4 h-4" />
-                New Casting
+                {t.dashboard.newCasting}
               </button>
             </div>
           </div>
@@ -338,7 +338,7 @@ export default function Dashboard() {
                         {tab === "sent" && r.status === "pending" && (
                           <>
                             <button onClick={() => updateStatus(r.id, "declined")} className="flex-1 bg-destructive/10 text-destructive py-2.5 rounded-xl font-body text-xs font-semibold hover:bg-destructive/20 transition-colors inline-flex items-center justify-center gap-1.5">
-                              <XCircle className="w-3.5 h-3.5" /> Cancel
+                              <XCircle className="w-3.5 h-3.5" /> {t.common.cancel}
                             </button>
                             <button onClick={() => navigate("/messages")} className="px-3.5 bg-card border border-border py-2.5 rounded-xl hover:border-primary/30 transition-colors">
                               <MessageCircle className="w-4 h-4 text-muted-foreground" />
@@ -387,10 +387,10 @@ export default function Dashboard() {
             {/* Quick Actions — mobile */}
             <div className="md:hidden flex gap-2">
               <button onClick={() => navigate("/discover")} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-card border border-border text-foreground font-body text-sm font-medium hover:border-primary/30 transition-all">
-                <Search className="w-4 h-4 text-primary" /> Discover
+                <Search className="w-4 h-4 text-primary" /> {t.nav.discover}
               </button>
               <button onClick={() => navigate("/castings")} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl gold-gradient text-primary-foreground font-body text-sm font-semibold">
-                <Megaphone className="w-4 h-4" /> New Casting
+                <Megaphone className="w-4 h-4" /> {t.dashboard.newCasting}
               </button>
             </div>
 
@@ -403,8 +403,8 @@ export default function Dashboard() {
                     <Sparkles className="w-5 h-5 text-warning" />
                   </div>
                   <div>
-                    <p className="font-heading text-sm font-bold text-foreground">{pendingReceived} pending {pendingReceived === 1 ? "request" : "requests"}</p>
-                    <p className="font-body text-xs text-muted-foreground">Someone wants to shoot with you!</p>
+                    <p className="font-heading text-sm font-bold text-foreground">{t.dashboard.pendingHeader(pendingReceived)}</p>
+                    <p className="font-body text-xs text-muted-foreground">{t.dashboard.pendingSub}</p>
                   </div>
                 </div>
               </motion.div>
@@ -418,7 +418,7 @@ export default function Dashboard() {
                   <h2 className="font-heading text-sm font-bold text-foreground">{t.dashboard.myCastings}</h2>
                 </div>
                 <button onClick={() => navigate("/castings")} className="text-[11px] font-body text-primary hover:underline inline-flex items-center gap-0.5">
-                  View all <ArrowUpRight className="w-3 h-3" />
+                  {t.cta.seeAll} <ArrowUpRight className="w-3 h-3" />
                 </button>
               </div>
               <MyCastingsSection />
@@ -434,12 +434,12 @@ export default function Dashboard() {
                     <Star className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="font-heading text-sm font-bold text-foreground">Upgrade to PRO</p>
-                    <p className="font-body text-xs text-muted-foreground">Get discovered faster</p>
+                    <p className="font-heading text-sm font-bold text-foreground">{t.dashboard.proUpgradeTitle}</p>
+                    <p className="font-body text-xs text-muted-foreground">{t.dashboard.proUpgradeSub}</p>
                   </div>
                 </div>
                 <p className="font-body text-[11px] text-muted-foreground leading-relaxed">
-                  Priority in search, unlimited portfolio, profile analytics, and the PRO badge.
+                  {t.dashboard.proUpgradeBody}
                 </p>
               </motion.div>
             )}

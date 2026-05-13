@@ -30,6 +30,7 @@ export interface Strings {
     close: string;
     confirm: string;
     cancel: string;
+    unknown: string;
     delete: string;
     edit: string;
     save: string;
@@ -375,6 +376,22 @@ export interface Strings {
     greetingMorning: (name: string) => string;
     greetingAfternoon: (name: string) => string;
     greetingEvening: (name: string) => string;
+    /** Static greeting prefix used where the name renders separately. */
+    goodMorning: string;
+    goodAfternoon: string;
+    goodEvening: string;
+    /** Discover page chrome */
+    seoTitle: (brandName: string) => string;
+    seoDescription: string;
+    sortBy: string;
+    distanceAny: string;
+    distanceUnit: string;
+    availableBadge: string;
+    bothLabel: string;
+    loadProfilesFailed: string;
+    seeMoreTitle: string;
+    seeMoreBody: string;
+    upgradeToPro: string;
   };
 
   // ── Dashboard ────────────────────────────────────────────────────────
@@ -397,6 +414,19 @@ export interface Strings {
     leaveReview: string;
     reviewed: string;
     discoverCreatives: string;
+    /** Page-specific toasts + chrome */
+    loadFailed: string;
+    requestActionFailed: string;
+    acceptedWithSession: string;
+    declinedToast: string;
+    requestStatusFallback: (status: string) => string;
+    reviewSessionFailed: string;
+    pendingHeader: (n: number) => string;
+    pendingSub: string;
+    proUpgradeTitle: string;
+    proUpgradeSub: string;
+    proUpgradeBody: string;
+    newCasting: string;
   };
 
   // ── Messages / chat ──────────────────────────────────────────────────
@@ -710,6 +740,7 @@ export const EN: Strings = {
     close: "Close",
     confirm: "Confirm",
     cancel: "Cancel",
+    unknown: "Unknown",
     delete: "Delete",
     edit: "Edit",
     save: "Save",
@@ -1009,6 +1040,20 @@ export const EN: Strings = {
     greetingMorning: (name) => `Good morning, ${name}`,
     greetingAfternoon: (name) => `Good afternoon, ${name}`,
     greetingEvening: (name) => `Good evening, ${name}`,
+    goodMorning: "Good morning",
+    goodAfternoon: "Good afternoon",
+    goodEvening: "Good evening",
+    seoTitle: (brandName) => `Discover Creatives — ${brandName}`,
+    seoDescription: "Browse photographers and models near you for TFP collaborations.",
+    sortBy: "Sort By",
+    distanceAny: "Any",
+    distanceUnit: "mi",
+    availableBadge: "AVAILABLE",
+    bothLabel: "Both",
+    loadProfilesFailed: "Failed to load profiles",
+    seeMoreTitle: "Want to see more?",
+    seeMoreBody: "PRO members get priority in search results and unlimited scrolling",
+    upgradeToPro: "Upgrade to PRO",
   },
   dashboard: {
     title: "Dashboard",
@@ -1029,6 +1074,18 @@ export const EN: Strings = {
     leaveReview: "Leave Review",
     reviewed: "Reviewed",
     discoverCreatives: "Discover Creatives",
+    loadFailed: "Failed to load requests",
+    requestActionFailed: "Failed to update request",
+    acceptedWithSession: "Request accepted! Session created 🎉",
+    declinedToast: "Request declined",
+    requestStatusFallback: (status) => `Request ${status}`,
+    reviewSessionFailed: "Failed to create session for review",
+    pendingHeader: (n) => `${n} pending ${n === 1 ? "request" : "requests"}`,
+    pendingSub: "Someone wants to shoot with you!",
+    proUpgradeTitle: "Upgrade to PRO",
+    proUpgradeSub: "Get discovered faster",
+    proUpgradeBody: "Priority in search, unlimited portfolio, profile analytics, and the PRO badge.",
+    newCasting: "New Casting",
   },
   messages: messagesEN,
   chat: messagesEN,
@@ -1327,6 +1384,7 @@ export const PT_BR: Strings = {
     close: "Fechar",
     confirm: "Confirmar",
     cancel: "Cancelar",
+    unknown: "Desconhecido",
     delete: "Apagar",
     edit: "Editar",
     save: "Salvar",
@@ -1511,7 +1569,7 @@ export const PT_BR: Strings = {
     nameLabel: "Nome",
     namePlaceholder: "Teu nome",
     nameRequired: "Coloca teu nome",
-    roleLabel: "Você é",
+    roleLabel: "Função",
     bioLabel: "Bio",
     bioPlaceholder: "Conta um pouco de ti...",
     updateMyLocation: "Atualizar minha localização",
@@ -1626,6 +1684,20 @@ export const PT_BR: Strings = {
     greetingMorning: (name) => `Bom dia, ${name}`,
     greetingAfternoon: (name) => `Boa tarde, ${name}`,
     greetingEvening: (name) => `Boa noite, ${name}`,
+    goodMorning: "Bom dia",
+    goodAfternoon: "Boa tarde",
+    goodEvening: "Boa noite",
+    seoTitle: (brandName) => `Explorar criativos — ${brandName}`,
+    seoDescription: "Explora fotógrafos e modelos perto de ti pra permutas.",
+    sortBy: "Ordenar",
+    distanceAny: "Qualquer",
+    distanceUnit: "mi",
+    availableBadge: "TÔ NA ATIVA",
+    bothLabel: "Os dois",
+    loadProfilesFailed: "Não rolou carregar os perfis",
+    seeMoreTitle: "Quer ver mais?",
+    seeMoreBody: "Membros PRO têm prioridade nos resultados e rolagem sem limite",
+    upgradeToPro: "Vira PRO",
   },
   dashboard: {
     title: "Painel",
@@ -1646,6 +1718,18 @@ export const PT_BR: Strings = {
     leaveReview: "Deixar recadinho",
     reviewed: "Recado enviado",
     discoverCreatives: "Achar gente",
+    loadFailed: "Não rolou carregar os pedidos",
+    requestActionFailed: "Não rolou atualizar o pedido",
+    acceptedWithSession: "Topou! Ensaio marcado 🎉",
+    declinedToast: "Pedido recusado",
+    requestStatusFallback: (status) => `Pedido ${status}`,
+    reviewSessionFailed: "Não rolou criar o ensaio pro recadinho",
+    pendingHeader: (n) => `${n} ${n === 1 ? "pedido pendente" : "pedidos pendentes"}`,
+    pendingSub: "Tem gente querendo fazer um ensaio contigo!",
+    proUpgradeTitle: "Vira PRO",
+    proUpgradeSub: "Aparece mais nas buscas",
+    proUpgradeBody: "Prioridade nas buscas, book ilimitado, analytics do perfil e o selo PRO.",
+    newCasting: "Novo trampo",
   },
   messages: messagesPT,
   chat: messagesPT,
