@@ -1,0 +1,196 @@
+// Full-width vertical profile card for the mobile feed. Hero photo on
+// top with overlay nameplate; chips + stats + CTA below.
+//
+// Type kept minimal here — only the fields the card renders. Wave C
+// passes the existing Discover ProfileCard which is a superset. Optional
+// fields (total_sessions, age) render their row only when present.
+
+import { useMemo } from "react";
+import { Star, Camera, Zap, MapPin } from "lucide-react";
+import { useBrand } from "@/hooks/useBrand";
+
+export interface ProfileFeedCardData {
+  id: string;
+  name: string;
+  /** "photographer" | "model" | "creative" | "dual" — drives the role label. */
+  role: string;
+  city: string | null;
+  state: string | null;
+  avatar_url: string | null;
+  cover_url: string | null;
+  styles: string[] | null;
+  rating_avg: number | null;
+  total_reviews: number | null;
+  /** Optional — added in Wave C select. */
+  total_sessions?: number | null;
+  /** Optional — when available_until > now, the "tô na ativa" badge renders. */
+  available_until?: string | null;
+}
+
+interface ProfileFeedCardProps {
+  profile: ProfileFeedCardData;
+  /** Distance in km, already calculated by the parent (haversine). Null hides the chip. */
+  distance: number | null;
+  onTap: (id: string) => void;
+  onTapPermuta: (id: string) => void;
+}
+
+const MAX_CHIPS = 3;
+
+function roleLabel(role: string, isPT: boolean): string | null {
+  if (isPT) {
+    if (role === "photographer") return "Fotógrafo";
+    if (role === "model") return "Modelo";
+    if (role === "dual") return "Fotógrafo & modelo";
+    return null;
+  }
+  if (role === "photographer") return "Photographer";
+  if (role === "model") return "Model";
+  if (role === "dual") return "Photographer & model";
+  return null;
+}
+
+function hoursUntil(iso: string): number {
+  const diff = new Date(iso).getTime() - Date.now();
+  return Math.max(0, Math.round(diff / 3_600_000));
+}
+
+export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta }: ProfileFeedCardProps) {
+  const brand = useBrand();
+  const isPT = brand.lang === "pt-BR";
+
+  // TODO Wave C: move strings to t.discover.*
+  const labels = isPT
+    ? {
+        permuta: "Chamar pra permuta",
+        trampos: (n: number) => `${n} trampos`,
+        ativaPrefix: "Tô na ativa",
+        ativaSuffix: (h: number) => (h <= 1 ? "sai já" : `sai ${h}h`),
+        distance: (km: number) => `${km}km`,
+      }
+    : {
+        permuta: "Send TFP request",
+        trampos: (n: number) => `${n} shoots`,
+        ativaPrefix: "Available",
+        ativaSuffix: (h: number) => (h <= 1 ? "now" : `${h}h left`),
+        distance: (km: number) => `${km}km`,
+      };
+
+  const heroImg = profile.cover_url || profile.avatar_url;
+  const role = roleLabel(profile.role, isPT);
+
+  const activeHoursLeft = useMemo(() => {
+    if (!profile.available_until) return null;
+    const h = hoursUntil(profile.available_until);
+    return h > 0 ? h : null;
+  }, [profile.available_until]);
+
+  const chips = (profile.styles ?? []).slice(0, MAX_CHIPS);
+  const extraChips = (profile.styles ?? []).length - chips.length;
+
+  const subtitleParts = [
+    profile.city,
+    role,
+  ].filter((x): x is string => Boolean(x));
+
+  return (
+    <article
+      className="mx-3.5 mb-3.5 lg:mx-0 bg-surface rounded-2xl overflow-hidden"
+      aria-label={profile.name}
+    >
+      {/* Hero */}
+      <button
+        onClick={() => onTap(profile.id)}
+        className="relative w-full block aspect-[5/4] bg-elevated active:scale-[0.99] transition-transform"
+        aria-label={profile.name}
+      >
+        {heroImg ? (
+          <img
+            src={heroImg}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-coral/20 via-elevated to-lavender/20" />
+        )}
+
+        {/* Badge: tô na ativa */}
+        {activeHoursLeft !== null && (
+          <span className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full bg-coral/95 text-on-coral text-[10px] font-medium">
+            <span className="w-1 h-1 rounded-full bg-on-coral" aria-hidden />
+            {labels.ativaPrefix} · {labels.ativaSuffix(activeHoursLeft)}
+          </span>
+        )}
+
+        {/* Badge: distance */}
+        {distance !== null && (
+          <span className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-1 rounded-lg bg-background/70 text-ink text-[11px] font-medium">
+            <MapPin className="w-3 h-3" strokeWidth={2.2} />
+            {labels.distance(Math.round(distance))}
+          </span>
+        )}
+
+        {/* Overlay — nameplate */}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/[0.92] via-background/40 to-transparent px-3.5 pt-12 pb-3.5 text-left">
+          <p className="text-base font-medium text-ink leading-tight">{profile.name}</p>
+          {subtitleParts.length > 0 && (
+            <p className="text-xs text-ink/70 mt-0.5 leading-tight">
+              {subtitleParts.join(" · ")}
+            </p>
+          )}
+        </div>
+      </button>
+
+      {/* Body */}
+      <div className="px-3.5 pt-2.5 pb-3.5">
+        {/* Chips */}
+        {chips.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-2.5">
+            {chips.map((c) => (
+              <span
+                key={c}
+                className="px-2 py-0.5 rounded-full bg-elevated text-lavender text-[11px]"
+              >
+                {c}
+              </span>
+            ))}
+            {extraChips > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-elevated text-ink-tertiary text-[11px]">
+                +{extraChips}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="flex items-center gap-3 mb-3 text-xs text-ink-secondary">
+          {profile.rating_avg !== null && profile.rating_avg > 0 && (
+            <span className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 text-warning fill-warning" strokeWidth={1.5} />
+              <span className="text-ink">{profile.rating_avg.toFixed(1)}</span>
+              {profile.total_reviews ? (
+                <span className="text-ink-tertiary">· {profile.total_reviews}</span>
+              ) : null}
+            </span>
+          )}
+          {profile.total_sessions != null && profile.total_sessions > 0 && (
+            <span className="flex items-center gap-1">
+              <Camera className="w-3.5 h-3.5" strokeWidth={1.8} />
+              {labels.trampos(profile.total_sessions)}
+            </span>
+          )}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => onTapPermuta(profile.id)}
+          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-coral text-on-coral text-sm font-medium active:scale-[0.98] transition-transform"
+        >
+          <Zap className="w-4 h-4" fill="currentColor" strokeWidth={0} />
+          {labels.permuta}
+        </button>
+      </div>
+    </article>
+  );
+}

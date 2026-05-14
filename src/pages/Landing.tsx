@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Camera, Users, Handshake, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import SEOHead from "@/components/SEOHead";
 import { useBrand } from "@/hooks/useBrand";
+import { useAuth } from "@/hooks/useAuth";
 
 const FEATURED = [
   { name: "Marcus Chen", role: "Photographer", city: "New York", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&q=85", pro: true },
@@ -30,6 +31,9 @@ const STEP_ICONS = [Camera, Users, Handshake];
 const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
 
 export default function Landing() {
+  const { user } = useAuth();
+  if (user) return <Navigate to="/discover" replace />;
+
   const navigate = useNavigate();
   const brand = useBrand();
   const t = brand.landing;

@@ -76,6 +76,7 @@ export default {
         surface: "hsl(var(--bg-surface))",    // bg-surface, border-surface
         elevated: "hsl(var(--bg-elevated))",  // bg-elevated
         coral: "hsl(var(--accent-warm))",     // bg-coral, text-coral, border-coral
+        "on-coral": "hsl(var(--on-accent-warm))", // text-on-coral (text on coral CTAs)
         lavender: "hsl(var(--accent-cool))",  // bg-lavender, text-lavender
         danger: "hsl(var(--danger))",         // bg-danger, text-danger
         ink: {
