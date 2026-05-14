@@ -12,7 +12,7 @@
 // this component just receives `isOpen` for the rotation hint.
 
 import { Plus } from "lucide-react";
-import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CreateFABProps {
   onClick: () => void;
@@ -21,16 +21,13 @@ interface CreateFABProps {
 }
 
 export default function CreateFAB({ onClick, isOpen = false }: CreateFABProps) {
-  const brand = useBrand();
-  const isPT = brand.lang === "pt-BR";
-  // TODO Wave C: t.create.fabAriaLabel
-  const ariaLabel = isPT ? "Criar" : "Create";
+  const t = useTranslation();
 
   return (
     <div className="lg:hidden sticky bottom-[88px] z-30 flex justify-end pr-3.5 pointer-events-none">
       <button
         onClick={onClick}
-        aria-label={ariaLabel}
+        aria-label={t.create.fabAria}
         aria-expanded={isOpen}
         className="pointer-events-auto w-14 h-14 rounded-full bg-coral shadow-glow-cta flex items-center justify-center active:scale-95 transition-transform"
       >

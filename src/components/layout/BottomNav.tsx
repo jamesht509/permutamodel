@@ -10,7 +10,7 @@
 
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Briefcase, MessageCircle, User } from "lucide-react";
-import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface BottomNavProps {
   /** Unread message count for the badge on Recadinhos. */
@@ -20,13 +20,7 @@ interface BottomNavProps {
 export default function BottomNav({ unreadMessages }: BottomNavProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const brand = useBrand();
-  const isPT = brand.lang === "pt-BR";
-
-  // TODO Wave C: move to t.bottomNav.*
-  const labels = isPT
-    ? { home: "Início", jobs: "Trampos", chat: "Recadinhos", me: "Eu" }
-    : { home: "Home", jobs: "Castings", chat: "Messages", me: "Me" };
+  const t = useTranslation();
 
   const pathname = location.pathname;
   const isHomeActive = pathname === "/discover" || pathname.startsWith("/discover/");
@@ -35,15 +29,15 @@ export default function BottomNav({ unreadMessages }: BottomNavProps) {
   const isMeActive = pathname.startsWith("/profile");
 
   const items = [
-    { icon: Home, label: labels.home, path: "/discover", active: isHomeActive, showBadge: false },
-    { icon: Briefcase, label: labels.jobs, path: "/castings", active: isJobsActive, showBadge: false },
-    { icon: MessageCircle, label: labels.chat, path: "/messages", active: isChatActive, showBadge: true },
-    { icon: User, label: labels.me, path: "/profile", active: isMeActive, showBadge: false },
+    { icon: Home, label: t.bottomNav.home, path: "/discover", active: isHomeActive, showBadge: false },
+    { icon: Briefcase, label: t.bottomNav.jobs, path: "/castings", active: isJobsActive, showBadge: false },
+    { icon: MessageCircle, label: t.bottomNav.chat, path: "/messages", active: isChatActive, showBadge: true },
+    { icon: User, label: t.bottomNav.me, path: "/profile", active: isMeActive, showBadge: false },
   ];
 
   return (
     <nav
-      aria-label={isPT ? "Navegação principal" : "Main navigation"}
+      aria-label={t.bottomNav.mainNavAria}
       className="lg:hidden sticky bottom-0 left-0 right-0 z-40 bg-surface border-t border-strong safe-area-pb"
     >
       <ul className="flex items-stretch justify-around px-2 pt-2.5 pb-2.5" role="tablist">

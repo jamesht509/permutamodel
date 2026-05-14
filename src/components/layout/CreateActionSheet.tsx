@@ -14,7 +14,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ClipboardList, Camera, X } from "lucide-react";
-import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface CreateActionSheetProps {
   isOpen: boolean;
@@ -29,27 +29,8 @@ export default function CreateActionSheet({
   onCreateCasting,
   onUploadPhoto,
 }: CreateActionSheetProps) {
-  const brand = useBrand();
-  const isPT = brand.lang === "pt-BR";
-
-  // TODO Wave C: move to t.create.*
-  const labels = isPT
-    ? {
-        title: "Criar",
-        close: "Fechar",
-        newCasting: "Novo trampo",
-        newCastingSub: "Achar gente pro próximo ensaio",
-        addPhoto: "Adicionar foto",
-        addPhotoSub: "Mostra o melhor que tu já fez",
-      }
-    : {
-        title: "Create",
-        close: "Close",
-        newCasting: "New casting",
-        newCastingSub: "Find people for your next shoot",
-        addPhoto: "Add photo",
-        addPhotoSub: "Show off your best work",
-      };
+  const t = useTranslation();
+  const labels = t.create;
 
   // ESC closes.
   useEffect(() => {
@@ -69,14 +50,14 @@ export default function CreateActionSheet({
   const actions = [
     {
       icon: ClipboardList,
-      label: labels.newCasting,
-      sub: labels.newCastingSub,
+      label: labels.novoTrampo,
+      sub: labels.novoTrampoSub,
       onClick: () => handle(onCreateCasting),
     },
     {
       icon: Camera,
-      label: labels.addPhoto,
-      sub: labels.addPhotoSub,
+      label: labels.addFoto,
+      sub: labels.addFotoSub,
       onClick: () => handle(onUploadPhoto),
     },
     // Wave 2: insert "Modo Bora" entry here.

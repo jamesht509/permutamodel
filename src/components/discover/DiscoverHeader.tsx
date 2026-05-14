@@ -28,7 +28,6 @@ export default function DiscoverHeader({
 }: DiscoverHeaderProps) {
   const brand = useBrand();
   const t = useTranslation();
-  const isPT = brand.lang === "pt-BR";
 
   const locationLabel =
     userCity && userState ? `${userCity}, ${userState}` : userCity ?? t.discover.setLocation;
@@ -45,7 +44,7 @@ export default function DiscoverHeader({
           <button
             onClick={onCityClick}
             className="flex items-center gap-1 text-[11px] text-ink-tertiary hover:text-ink-secondary active:scale-95 transition-all min-h-[20px]"
-            aria-label={isPT ? "Trocar cidade" : "Change city"}
+            aria-label={t.discover.headerCityAria}
           >
             <MapPin className="w-3 h-3 shrink-0" strokeWidth={2} />
             <span className={`truncate ${hasLocation ? "text-ink-tertiary" : "text-ink-secondary"}`}>
@@ -58,14 +57,14 @@ export default function DiscoverHeader({
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={onSearchClick}
-            aria-label={isPT ? "Buscar" : "Search"}
+            aria-label={t.discover.headerSearchAria}
             className="w-9 h-9 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
           >
             <Search className="w-[18px] h-[18px] text-ink-secondary" strokeWidth={2} />
           </button>
           <button
             onClick={onNotificationsClick}
-            aria-label={isPT ? "Notificações" : "Notifications"}
+            aria-label={t.discover.headerNotificationsAria}
             className="relative w-9 h-9 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
           >
             <Bell className="w-[18px] h-[18px] text-ink-secondary" strokeWidth={2} />

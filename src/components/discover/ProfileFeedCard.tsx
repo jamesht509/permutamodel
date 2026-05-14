@@ -8,6 +8,7 @@
 import { useMemo } from "react";
 import { Star, Camera, Zap, MapPin } from "lucide-react";
 import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export interface ProfileFeedCardData {
   id: string;
@@ -57,24 +58,8 @@ function hoursUntil(iso: string): number {
 
 export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta }: ProfileFeedCardProps) {
   const brand = useBrand();
+  const t = useTranslation();
   const isPT = brand.lang === "pt-BR";
-
-  // TODO Wave C: move strings to t.discover.*
-  const labels = isPT
-    ? {
-        permuta: "Chamar pra permuta",
-        trampos: (n: number) => `${n} trampos`,
-        ativaPrefix: "Tô na ativa",
-        ativaSuffix: (h: number) => (h <= 1 ? "sai já" : `sai ${h}h`),
-        distance: (km: number) => `${km}km`,
-      }
-    : {
-        permuta: "Send TFP request",
-        trampos: (n: number) => `${n} shoots`,
-        ativaPrefix: "Available",
-        ativaSuffix: (h: number) => (h <= 1 ? "now" : `${h}h left`),
-        distance: (km: number) => `${km}km`,
-      };
 
   const heroImg = profile.cover_url || profile.avatar_url;
   const role = roleLabel(profile.role, isPT);
@@ -119,7 +104,7 @@ export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta
         {activeHoursLeft !== null && (
           <span className="absolute top-2.5 left-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full bg-coral/95 text-on-coral text-[10px] font-medium">
             <span className="w-1 h-1 rounded-full bg-on-coral" aria-hidden />
-            {labels.ativaPrefix} · {labels.ativaSuffix(activeHoursLeft)}
+            {t.discover.toNaAtivaBadge(activeHoursLeft)}
           </span>
         )}
 
@@ -127,7 +112,7 @@ export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta
         {distance !== null && (
           <span className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-1 rounded-lg bg-background/70 text-ink text-[11px] font-medium">
             <MapPin className="w-3 h-3" strokeWidth={2.2} />
-            {labels.distance(Math.round(distance))}
+            {t.discover.distanceKm(Math.round(distance))}
           </span>
         )}
 
@@ -177,7 +162,7 @@ export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta
           {profile.total_sessions != null && profile.total_sessions > 0 && (
             <span className="flex items-center gap-1">
               <Camera className="w-3.5 h-3.5" strokeWidth={1.8} />
-              {labels.trampos(profile.total_sessions)}
+              {t.discover.tramposCount(profile.total_sessions)}
             </span>
           )}
         </div>
@@ -188,7 +173,7 @@ export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta
           className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-coral text-on-coral text-sm font-medium active:scale-[0.98] transition-transform"
         >
           <Zap className="w-4 h-4" fill="currentColor" strokeWidth={0} />
-          {labels.permuta}
+          {t.discover.chamarPermuta}
         </button>
       </div>
     </article>

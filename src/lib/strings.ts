@@ -431,6 +431,50 @@ export interface Strings {
     seeMoreTitle: string;
     seeMoreBody: string;
     upgradeToPro: string;
+    /** Wave 1 redesign — mobile-first discover. */
+    toNaAtivaSection: string;
+    toNaAtivaCount: (n: number) => string;
+    toNaAtivaBadge: (h: number) => string;
+    toNaAtivaAria: string;
+    seeMore: string;
+    distanceKm: (km: number) => string;
+    tramposCount: (n: number) => string;
+    chamarPermuta: string;
+    filtersIconAria: string;
+    headerNotificationsAria: string;
+    headerSearchAria: string;
+    headerCityAria: string;
+  };
+
+  // ── Wave 1 redesign sections ─────────────────────────────────────────
+  bottomNav: {
+    home: string;
+    jobs: string;
+    chat: string;
+    me: string;
+    mainNavAria: string;
+  };
+
+  create: {
+    title: string;
+    close: string;
+    novoTrampo: string;
+    novoTrampoSub: string;
+    addFoto: string;
+    addFotoSub: string;
+    fabAria: string;
+  };
+
+  filtersSheet: {
+    title: string;
+    close: string;
+    clear: string;
+    apply: string;
+    styles: string;
+    radius: string;
+    rating: string;
+    anyDistance: string;
+    anyRating: string;
   };
 
   // ── Dashboard ────────────────────────────────────────────────────────
@@ -1128,6 +1172,45 @@ export const EN: Strings = {
     seeMoreTitle: "Want to see more?",
     seeMoreBody: "PRO members get priority in search results and unlimited scrolling",
     upgradeToPro: "Upgrade to PRO",
+    toNaAtivaSection: "Available now",
+    toNaAtivaCount: (n) => `${n} near you`,
+    toNaAtivaBadge: (h) => (h <= 1 ? "Available · ending soon" : `Available · ${h}h left`),
+    toNaAtivaAria: "People available now",
+    seeMore: "See more",
+    distanceKm: (km) => `${km}km`,
+    tramposCount: (n) => `${n} sessions`,
+    chamarPermuta: "Send TFP invite",
+    filtersIconAria: "Open filters",
+    headerNotificationsAria: "Notifications",
+    headerSearchAria: "Search",
+    headerCityAria: "Change city",
+  },
+  bottomNav: {
+    home: "Home",
+    jobs: "Castings",
+    chat: "Messages",
+    me: "Me",
+    mainNavAria: "Main navigation",
+  },
+  create: {
+    title: "What are we creating?",
+    close: "Close",
+    novoTrampo: "New casting",
+    novoTrampoSub: "Find collaborators",
+    addFoto: "Add photo",
+    addFotoSub: "To your portfolio",
+    fabAria: "Create",
+  },
+  filtersSheet: {
+    title: "Filters",
+    close: "Close filters",
+    clear: "Clear",
+    apply: "Apply filters",
+    styles: "Styles",
+    radius: "Distance (km)",
+    rating: "Minimum rating",
+    anyDistance: "Any distance",
+    anyRating: "Any rating",
   },
   dashboard: {
     title: "Dashboard",
@@ -1807,6 +1890,45 @@ export const PT_BR: Strings = {
     seeMoreTitle: "Quer ver mais?",
     seeMoreBody: "Membros PRO têm prioridade nos resultados e rolagem sem limite",
     upgradeToPro: "Vira PRO",
+    toNaAtivaSection: "Tô na ativa agora",
+    toNaAtivaCount: (n) => `${n} perto de ti`,
+    toNaAtivaBadge: (h) => (h <= 1 ? "Tô na ativa · sai já" : `Tô na ativa · sai ${h}h`),
+    toNaAtivaAria: "Pessoas disponíveis agora",
+    seeMore: "Ver mais",
+    distanceKm: (km) => `${km}km`,
+    tramposCount: (n) => `${n} trampos`,
+    chamarPermuta: "Chamar pra permuta",
+    filtersIconAria: "Abrir filtros",
+    headerNotificationsAria: "Notificações",
+    headerSearchAria: "Buscar",
+    headerCityAria: "Trocar cidade",
+  },
+  bottomNav: {
+    home: "Início",
+    jobs: "Trampos",
+    chat: "Recadinhos",
+    me: "Eu",
+    mainNavAria: "Navegação principal",
+  },
+  create: {
+    title: "O que vamos criar?",
+    close: "Fechar",
+    novoTrampo: "Novo trampo",
+    novoTrampoSub: "Convida quem topar",
+    addFoto: "Adicionar foto",
+    addFotoSub: "Pro teu book",
+    fabAria: "Criar",
+  },
+  filtersSheet: {
+    title: "Filtros",
+    close: "Fechar filtros",
+    clear: "Limpar",
+    apply: "Aplicar filtros",
+    styles: "Estilos",
+    radius: "Distância (km)",
+    rating: "Avaliação mínima",
+    anyDistance: "Qualquer distância",
+    anyRating: "Qualquer avaliação",
   },
   dashboard: {
     title: "Painel",

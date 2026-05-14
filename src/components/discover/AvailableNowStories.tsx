@@ -6,7 +6,7 @@
 // to guard. Hidden on desktop via lg:hidden (desktop surfaces availability
 // through the sidebar filter instead).
 
-import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export interface AvailableNowProfile {
   id: string;
@@ -39,29 +39,23 @@ function initial(name: string): string {
 }
 
 export default function AvailableNowStories({ profiles, onTapStory, onTapMore }: AvailableNowStoriesProps) {
-  const brand = useBrand();
-  const isPT = brand.lang === "pt-BR";
+  const t = useTranslation();
 
   if (profiles.length === 0) return null;
-
-  // TODO Wave C: move to t.discover.toNaAtiva*
-  const headerLabel = isPT ? "TÔ NA ATIVA AGORA" : "AVAILABLE NOW";
-  const headerCount = (n: number) => (isPT ? `${n} perto de ti` : `${n} near you`);
-  const moreLabel = (n: number) => `+${n}`;
 
   const visible = profiles.slice(0, MAX_VISIBLE);
   const overflow = profiles.length - visible.length;
 
   return (
     <section
-      aria-label={isPT ? "Pessoas disponíveis agora" : "People available now"}
+      aria-label={t.discover.toNaAtivaAria}
       className="lg:hidden bg-background"
     >
       <header className="flex items-center gap-1.5 px-4 pt-3 pb-2.5">
         <span className="w-1.5 h-1.5 rounded-full bg-coral shrink-0" aria-hidden />
-        <h2 className="text-[11px] font-medium text-coral tracking-[0.04em]">
-          {headerLabel}
-          <span className="text-ink-tertiary font-normal"> · {headerCount(profiles.length)}</span>
+        <h2 className="text-[11px] font-medium text-coral tracking-[0.04em] uppercase">
+          {t.discover.toNaAtivaSection}
+          <span className="text-ink-tertiary font-normal normal-case"> · {t.discover.toNaAtivaCount(profiles.length)}</span>
         </h2>
       </header>
 
@@ -113,16 +107,16 @@ export default function AvailableNowStories({ profiles, onTapStory, onTapMore }:
               <button
                 onClick={onTapMore}
                 disabled={!onTapMore}
-                aria-label={isPT ? `Ver mais ${overflow}` : `See ${overflow} more`}
+                aria-label={`${t.discover.seeMore} (+${overflow})`}
                 className="flex flex-col items-center gap-1.5 w-[58px] active:scale-95 transition-transform disabled:opacity-50"
               >
                 <div className="w-[54px] h-[54px] rounded-full bg-elevated/65 flex items-center justify-center">
                   <span className="text-ink-secondary text-base font-medium leading-none">
-                    {moreLabel(overflow)}
+                    +{overflow}
                   </span>
                 </div>
                 <span className="text-[11px] text-ink-tertiary leading-none">
-                  {isPT ? "ver mais" : "more"}
+                  {t.discover.seeMore}
                 </span>
               </button>
             </li>

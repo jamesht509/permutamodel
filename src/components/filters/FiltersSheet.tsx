@@ -10,7 +10,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { useBrand } from "@/hooks/useBrand";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export interface FilterValues {
   styles: string[];
@@ -36,33 +36,8 @@ export default function FiltersSheet({
   onApply,
   styleOptions,
 }: FiltersSheetProps) {
-  const brand = useBrand();
-  const isPT = brand.lang === "pt-BR";
-
-  // TODO Wave C: move to t.discover.filters*
-  const labels = isPT
-    ? {
-        title: "Filtros",
-        clear: "Limpar",
-        apply: "Aplicar filtros",
-        styles: "Estilos",
-        radius: "Distância",
-        rating: "Avaliação mínima",
-        close: "Fechar filtros",
-        anyDistance: "Qualquer distância",
-        anyRating: "Qualquer avaliação",
-      }
-    : {
-        title: "Filters",
-        clear: "Clear",
-        apply: "Apply filters",
-        styles: "Styles",
-        radius: "Distance",
-        rating: "Minimum rating",
-        close: "Close filters",
-        anyDistance: "Any distance",
-        anyRating: "Any rating",
-      };
+  const t = useTranslation();
+  const labels = t.filtersSheet;
 
   const [draft, setDraft] = useState<FilterValues>(currentFilters);
 
