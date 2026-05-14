@@ -406,37 +406,16 @@ export default function Settings() {
             {(profile?.plan || "free").toUpperCase()}
           </span>
         </div>
-        {(profile?.plan === "pro" || profile?.plan === "premium") ? (
+        {(profile?.plan === "pro" || profile?.plan === "premium") && (
           <div className="p-4 rounded-xl bg-primary/10 border border-primary/20 text-center">
             <Crown className="w-8 h-8 text-primary mx-auto mb-2" />
             <p className="font-heading text-sm font-bold text-foreground">You're a PRO member!</p>
             <p className="font-body text-xs text-muted-foreground mt-1">Enjoy unlimited photos, priority search, and analytics.</p>
           </div>
-        ) : (
-          <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
-            <div className="flex items-center gap-3 mb-3">
-              <Crown className="w-6 h-6 text-primary" />
-              <div>
-                <p className="font-heading text-sm font-bold text-foreground">Upgrade to PRO</p>
-                <p className="font-body text-xs text-muted-foreground">Starting at $6.67/mo billed annually</p>
-              </div>
-            </div>
-            <ul className="space-y-1.5 mb-4">
-              {["Priority in search results", "Unlimited portfolio photos", "Profile analytics & insights", "PRO badge on your profile", "Featured in discovery"].map((b) => (
-                <li key={b} className="flex items-center gap-2 text-xs font-body text-muted-foreground">
-                  <div className="w-1 h-1 rounded-full bg-primary" />
-                  {b}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={() => navigate("/pro")}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-body font-semibold"
-            >
-              View PRO Plans
-            </button>
-          </div>
         )}
+        {/* FASE 6: PRO upgrade card hidden for free users. Stripe
+            monetization comes in Sessão 5+; existing PRO/Premium users
+            still see their badge above. */}
       </Section>
 
       {/* Notifications */}

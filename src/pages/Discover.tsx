@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Bell, MapPin, Star, Heart, Search, ChevronDown, X, SlidersHorizontal, Lock, Zap, Megaphone } from "lucide-react";
+import { Bell, MapPin, Star, Heart, Search, ChevronDown, X, SlidersHorizontal, Zap, Megaphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -801,21 +801,10 @@ export default function Discover() {
               })}
             </div>
 
-            {profile?.plan === "free" && profiles.length >= 20 && (
-              <div className="text-center py-8 px-4">
-                <Lock className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <p className="font-heading text-sm font-bold text-foreground mb-1">{t.discover.seeMoreTitle}</p>
-                <p className="font-body text-xs text-muted-foreground mb-3">
-                  {t.discover.seeMoreBody}
-                </p>
-                <button
-                  onClick={() => navigate("/pro")}
-                  className="px-6 py-2.5 rounded-xl gold-gradient text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
-                >
-                  {t.discover.upgradeToPro}
-                </button>
-              </div>
-            )}
+            {/* FASE 6: PRO gate hidden until Stripe monetization is ready
+                (Sessão 5+). Free plan keeps scrolling without limit until
+                the upsell is live. seeMoreTitle/Body/upgradeToPro strings
+                stay in strings.ts for the future re-enable. */}
           </>
         )}
 

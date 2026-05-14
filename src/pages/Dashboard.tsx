@@ -434,25 +434,9 @@ export default function Dashboard() {
               <MyCastingsSection />
             </div>
 
-            {/* Pro Upgrade Card */}
-            {profile?.plan === "free" && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-                onClick={() => navigate("/pro")}
-                className="rounded-2xl p-5 bg-gradient-to-br from-primary/10 via-card to-secondary/10 border border-primary/20 cursor-pointer hover:border-primary/40 transition-all">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center">
-                    <Star className="w-5 h-5 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <p className="font-heading text-sm font-bold text-foreground">{t.dashboard.proUpgradeTitle}</p>
-                    <p className="font-body text-xs text-muted-foreground">{t.dashboard.proUpgradeSub}</p>
-                  </div>
-                </div>
-                <p className="font-body text-[11px] text-muted-foreground leading-relaxed">
-                  {t.dashboard.proUpgradeBody}
-                </p>
-              </motion.div>
-            )}
+            {/* FASE 6: Pro Upgrade card hidden until Stripe monetization
+                lands in Sessão 5+. proUpgrade strings kept in strings.ts
+                so the card slot can be re-enabled without re-translating. */}
           </div>
         </div>
       </div>

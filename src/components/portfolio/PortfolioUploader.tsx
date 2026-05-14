@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback } from "react";
-import { Upload, X, Star, Loader2, Crown } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Upload, X, Star, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import imageCompression from "browser-image-compression";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface PhotoItem {
   id: string;
@@ -41,11 +41,10 @@ interface Props {
 const MAX_FREE_PHOTOS = 20;
 
 export default function PortfolioUploader({ userId, photos, setPhotos, onChanged, isPro = false }: Props) {
-  const navigate = useNavigate();
+  const t = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<PendingUpload[]>([]);
   const [batchUploading, setBatchUploading] = useState(false);
-  const [showProModal, setShowProModal] = useState(false);
 
   const handleFiles = useCallback((files: FileList) => {
     const maxPhotos = isPro ? 999 : MAX_FREE_PHOTOS;
@@ -64,7 +63,9 @@ export default function PortfolioUploader({ userId, photos, setPhotos, onChanged
         continue;
       }
       if (!isPro && file.size > 5 * 1024 * 1024) {
-        setShowProModal(true);
+        // FASE 6: PRO upsell modal removed (no Stripe yet). Toast covers
+        // the limit; future PRO reactivation will reinstate the modal.
+        toast.error(t.validation.maxFileSize(5));
         return;
       }
       newPending.push({
@@ -363,26 +364,8 @@ export default function PortfolioUploader({ userId, photos, setPhotos, onChanged
 
       <p className="text-center font-body text-xs text-muted-foreground mt-2">{photos.length + pending.length}/10 photos</p>
 
-      {/* PRO upgrade modal */}
-      {showProModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-card w-80 rounded-2xl border border-border p-6 text-center">
-            <Crown className="w-12 h-12 text-primary mx-auto mb-3" />
-            <h3 className="font-heading text-lg font-bold text-foreground mb-2">Upgrade to PRO</h3>
-            <p className="font-body text-sm text-muted-foreground mb-4">
-              Free users can upload up to 5MB. PRO members get 10MB uploads with compression.
-            </p>
-            <div className="flex gap-3">
-              <button onClick={() => setShowProModal(false)} className="flex-1 py-2.5 rounded-xl bg-card border border-border font-body text-sm text-foreground">
-                Cancel
-              </button>
-              <button onClick={() => navigate("/pro")} className="flex-1 py-2.5 rounded-xl gold-gradient text-primary-foreground font-body font-semibold text-sm">
-                Go PRO
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* FASE 6: PRO upgrade modal removed — toast covers the size cap
+          until Stripe monetization lands in Sessão 5+. */}
     </div>
   );
 }
