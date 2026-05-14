@@ -1,25 +1,10 @@
 import type { OnboardingData } from "@/pages/Onboarding";
 import { Camera, User, Palette, Sparkles } from "lucide-react";
+import { useTranslation } from "@/hooks/useTranslation";
+import { STYLE_KEYS, labelForStyle, type StyleKey } from "@/lib/styles";
+import { cn } from "@/lib/utils";
 
-const roles = [
-  { value: "photographer", icon: Camera, label: "Photographer", desc: "I capture moments" },
-  { value: "model", icon: User, label: "Model", desc: "I bring visions to life" },
-  { value: "creative", icon: Palette, label: "Creative", desc: "MUA, Stylist, etc." },
-  { value: "dual", icon: Sparkles, label: "Both", desc: "Photographer & Model" },
-];
-
-const EXPERIENCE_LEVELS = [
-  { value: "newcomer", label: "Beginner", desc: "Just starting out" },
-  { value: "rising", label: "Intermediate", desc: "Some experience" },
-  { value: "established", label: "Advanced", desc: "Years of work" },
-  { value: "elite", label: "Professional", desc: "Full-time creative" },
-];
-
-const SPECIALTIES = [
-  "Portrait", "Fashion", "Editorial", "Street", "Boudoir",
-  "Commercial", "Lifestyle", "Fine Art", "Fitness", "Beauty",
-  "Conceptual", "Events", "Couples", "Maternity",
-];
+const MAX_STYLES = 5;
 
 interface Props {
   data: OnboardingData;
@@ -27,24 +12,45 @@ interface Props {
 }
 
 export default function StepCraft({ data, update }: Props) {
-  const toggleStyle = (s: string) => {
-    update({
-      styles: data.styles.includes(s)
-        ? data.styles.filter((x) => x !== s)
-        : data.styles.length < 5 ? [...data.styles, s] : data.styles,
-    });
+  const t = useTranslation();
+
+  const roles = [
+    { value: "photographer", icon: Camera, label: t.common.photographer, desc: t.common.photographer },
+    { value: "model", icon: User, label: t.common.model, desc: t.common.model },
+    { value: "creative", icon: Palette, label: t.common.creative, desc: "MUA, Stylist, etc." },
+    { value: "dual", icon: Sparkles, label: t.common.dual, desc: t.common.dual },
+  ];
+
+  const experienceLevels = [
+    { value: "newcomer", label: t.discover.beginner },
+    { value: "rising", label: t.discover.intermediate },
+    { value: "established", label: t.discover.advanced },
+    { value: "elite", label: t.discover.professional },
+  ];
+
+  const toggleStyle = (key: StyleKey) => {
+    const selected = data.styles.includes(key);
+    if (selected) {
+      update({ styles: data.styles.filter((x) => x !== key) });
+    } else if (data.styles.length < MAX_STYLES) {
+      update({ styles: [...data.styles, key] });
+    }
+    // Hit the cap → no-op (chip is rendered disabled, see UI below).
   };
+
+  const atCap = data.styles.length >= MAX_STYLES;
 
   return (
     <div className="max-w-md mx-auto space-y-6">
       <div>
-        <h2 className="font-heading text-2xl font-bold text-foreground">Your craft</h2>
-        <p className="font-body text-sm text-muted-foreground mt-1">Help us match you with the right people</p>
+        <h2 className="font-heading text-2xl font-bold text-foreground">{t.onboardingShell.stepYourCraft}</h2>
       </div>
 
       {/* Role */}
       <div>
-        <label className="block font-body text-xs text-muted-foreground mb-2">I am a... *</label>
+        <label className="block font-body text-xs text-muted-foreground mb-2">
+          {t.editProfile.roleLabel} *
+        </label>
         <div className="grid grid-cols-2 gap-2.5">
           {roles.map((r) => {
             const selected = data.role === r.value;
@@ -60,7 +66,6 @@ export default function StepCraft({ data, update }: Props) {
               >
                 <r.icon className={`w-6 h-6 mx-auto mb-2 ${selected ? "text-primary" : "text-muted-foreground"}`} />
                 <p className="font-heading font-semibold text-foreground text-sm">{r.label}</p>
-                <p className="font-body text-[10px] text-muted-foreground mt-0.5">{r.desc}</p>
               </button>
             );
           })}
@@ -69,9 +74,11 @@ export default function StepCraft({ data, update }: Props) {
 
       {/* Experience */}
       <div>
-        <label className="block font-body text-xs text-muted-foreground mb-2">Experience Level</label>
+        <label className="block font-body text-xs text-muted-foreground mb-2">
+          {t.discover.experienceLevel}
+        </label>
         <div className="grid grid-cols-2 gap-2">
-          {EXPERIENCE_LEVELS.map((lvl) => {
+          {experienceLevels.map((lvl) => {
             const selected = data.experience === lvl.value;
             return (
               <button
@@ -84,39 +91,46 @@ export default function StepCraft({ data, update }: Props) {
                 }`}
               >
                 <p className={`font-body text-sm font-medium ${selected ? "text-foreground" : "text-muted-foreground"}`}>{lvl.label}</p>
-                <p className="font-body text-[10px] text-muted-foreground">{lvl.desc}</p>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Specialties */}
+      {/* Styles — brand-aware labels, max 5 with disable-when-cap visual */}
       <div>
-        <label className="block font-body text-xs text-muted-foreground mb-2">Specialties * (up to 5)</label>
-        <div className="flex flex-wrap gap-1.5">
-          {SPECIALTIES.map((s) => (
-            <button
-              key={s}
-              onClick={() => toggleStyle(s)}
-              className={`px-3 py-1.5 rounded-full text-xs font-body font-medium transition-all ${
-                data.styles.includes(s)
-                  ? "bg-primary/20 text-primary border border-primary/30"
-                  : "bg-card/50 text-muted-foreground border border-border hover:border-border/80"
-              }`}
-            >
-              {s}
-            </button>
-          ))}
+        <label className="block font-body text-xs text-muted-foreground mb-2">
+          {t.editProfile.stylesLabelMax(MAX_STYLES)} *
+        </label>
+        <div className="grid grid-cols-3 gap-1.5">
+          {STYLE_KEYS.map((key) => {
+            const isSelected = data.styles.includes(key);
+            const isDisabled = !isSelected && atCap;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => toggleStyle(key)}
+                disabled={isDisabled}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-xs font-body font-medium transition-all text-center",
+                  isSelected && "bg-primary/20 text-primary border border-primary/30",
+                  !isSelected && !isDisabled && "bg-card/50 text-muted-foreground border border-border hover:border-border/80",
+                  isDisabled && "bg-card/30 text-muted-foreground/50 border border-border/40 cursor-not-allowed",
+                )}
+              >
+                {labelForStyle(key, t.styles)}
+              </button>
+            );
+          })}
         </div>
-        <p className="font-body text-[10px] text-muted-foreground mt-1.5">{data.styles.length}/5 selected</p>
+        <p className="font-body text-[10px] text-muted-foreground mt-1.5">{data.styles.length}/{MAX_STYLES}</p>
       </div>
 
       {/* TFP Toggle */}
       <div className="flex items-center justify-between bg-card/50 border border-border rounded-xl px-4 py-3">
         <div>
-          <p className="font-body text-sm text-foreground font-medium">Available for TFP</p>
-          <p className="font-body text-[10px] text-muted-foreground">Show you're open to collaborate</p>
+          <p className="font-body text-sm text-foreground font-medium">{t.profile.availableNow}</p>
         </div>
         <button
           onClick={() => update({ tfpAvailable: !data.tfpAvailable })}

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useBrand } from "@/hooks/useBrand";
 import { useTranslation } from "@/hooks/useTranslation";
 import { geocodeAddress } from "@/lib/geocoding";
+import { isValidHandle } from "@/lib/instagram";
 import StepAboutYou from "@/components/onboarding/StepAboutYou";
 import StepCraft from "@/components/onboarding/StepCraft";
 import StepShowWork from "@/components/onboarding/StepShowWork";
@@ -66,9 +67,20 @@ export default function Onboarding() {
     setData((prev) => ({ ...prev, ...partial }));
   }, []);
 
+  // Step 1: name + avatar + city + state required. Instagram is OPTIONAL
+  //   (Fase 6 change); when present it must pass the handle regex (checked
+  //   in `next()` with a separate toast, NOT as a "missing" field).
+  // Step 2: role + at least 1 style (max 5 enforced inside StepCraft).
+  // Step 3: at least 1 portfolio photo.
   const canContinue = (): boolean => {
     switch (step) {
-      case 1: return !!data.name.trim() && !!data.avatar_url && !!data.city.trim() && !!data.state.trim() && !!data.instagram.trim();
+      case 1:
+        return (
+          !!data.name.trim() &&
+          !!data.avatar_url &&
+          !!data.city.trim() &&
+          !!data.state.trim()
+        );
       case 2: return !!data.role && data.styles.length >= 1;
       case 3: return data.portfolioUrls.length >= 1;
       default: return false;
@@ -82,7 +94,9 @@ export default function Onboarding() {
       if (!data.name.trim()) missing.push(m.name);
       if (!data.avatar_url) missing.push(m.avatar);
       if (!data.city.trim() || !data.state.trim()) missing.push(m.location);
-      if (!data.instagram.trim()) missing.push(m.instagram);
+    }
+    if (step === 2) {
+      if (data.styles.length === 0) missing.push(m.styles);
     }
     if (step === 3) {
       if (data.portfolioUrls.length === 0) missing.push(m.portfolio);
@@ -159,6 +173,13 @@ export default function Onboarding() {
   };
 
   const next = () => {
+    // Instagram is optional, but if provided it must look like a real
+    // handle. Surfaces as a separate toast (NOT a "missing field" entry),
+    // so the user can clearly see "fix the handle" vs "fill the blanks".
+    if (step === 1 && data.instagram.trim() && !isValidHandle(data.instagram)) {
+      toast.error(t.validation.invalidInstagram);
+      return;
+    }
     if (step === TOTAL_STEPS) {
       handleComplete();
     } else {
