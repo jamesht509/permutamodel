@@ -3,6 +3,7 @@ import { X, Upload, ArrowRight, ArrowLeft, Sparkles, MapPin, Clock, Users, Image
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useBrand } from "@/hooks/useBrand";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -18,6 +19,7 @@ interface Props { open: boolean; onClose: () => void; onCreated?: () => void; }
 
 export default function CreateCastingModal({ open, onClose, onCreated }: Props) {
   const { user } = useAuth();
+  const brand = useBrand();
   const t = useTranslation();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -84,6 +86,7 @@ export default function CreateCastingModal({ open, onClose, onCreated }: Props) 
     setSaving(true);
     const { error } = await supabase.from("casting_calls").insert({
       creator_id: user.id,
+      country: brand.country,
       title: title.trim(),
       description: description.trim(),
       type_needed: typeNeeded.length > 0 ? typeNeeded : ["Model"],

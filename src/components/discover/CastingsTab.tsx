@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Star, Megaphone, CalendarDays, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useBrand } from "@/hooks/useBrand";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import ApplyModal from "@/components/castings/ApplyModal";
@@ -44,6 +45,7 @@ function timeAgo(d: string | null): string {
 
 export default function CastingsTab() {
   const { user } = useAuth();
+  const brand = useBrand();
   const navigate = useNavigate();
   const t = useTranslation();
   const [castings, setCastings] = useState<CastingCard[]>([]);
@@ -55,10 +57,12 @@ export default function CastingsTab() {
     if (!user) return;
     setLoading(true);
 
+    // Country-scoped (Fase 6): mirrors the profiles split.
     const { data: castingData } = await supabase
       .from("casting_calls")
       .select("*")
       .eq("status", "open")
+      .eq("country", brand.country)
       .order("created_at", { ascending: false });
 
     if (!castingData) { setCastings([]); setLoading(false); return; }
@@ -95,7 +99,7 @@ export default function CastingsTab() {
 
     setCastings(mapped);
     setLoading(false);
-  }, [user]);
+  }, [user, brand.country]);
 
   useEffect(() => { fetchCastings(); }, [fetchCastings]);
 

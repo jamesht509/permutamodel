@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Star, Filter, X, MapPin, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useBrand } from "@/hooks/useBrand";
 import { useTranslation } from "@/hooks/useTranslation";
 import CreateCastingModal from "@/components/castings/CreateCastingModal";
 
@@ -36,6 +37,7 @@ type Tab = "open" | "mine" | "applied";
 
 export default function Castings() {
   const { user } = useAuth();
+  const brand = useBrand();
   const t = useTranslation();
   const navigate = useNavigate();
 
@@ -59,9 +61,15 @@ export default function Castings() {
     if (!user) return;
     setLoading(true);
 
+    // Country-scoped feed (Fase 6): BR users only see BR castings, US
+    // only US. Mirrors the Discover.tsx split. Applies to every tab —
+    // "mine" is moot (user is in one country), but the constraint stays
+    // for consistency and protects against legacy cross-brand rows if
+    // a user ever migrates country.
     let query = supabase
       .from("casting_calls")
       .select("*")
+      .eq("country", brand.country)
       .order("created_at", { ascending: false });
 
     if (tab === "open") query = query.eq("status", "open");
@@ -115,7 +123,7 @@ export default function Castings() {
     }));
     setCastings(mapped);
     setLoading(false);
-  }, [user, tab, filterStyles, filterLocation]);
+  }, [user, brand.country, tab, filterStyles, filterLocation]);
 
   useEffect(() => { fetchCastings(); }, [fetchCastings]);
 
