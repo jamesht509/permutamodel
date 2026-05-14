@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { useTranslation } from "@/hooks/useTranslation";
+import type { Strings } from "@/lib/strings";
 import { motion } from "framer-motion";
 
 interface Notif {
@@ -15,7 +16,35 @@ interface Notif {
   read: boolean;
   created_at: string | null;
   data: any;
+  /** Localization payload populated by Fase 4 inserts. */
+  kind?: string | null;
+  params?: Record<string, unknown> | null;
   grouped?: Notif[];
+}
+
+/**
+ * Prefer the kind+params template (so PT-BR/EN flow through useTranslation
+ * at read time). Falls back to the legacy title/body columns when:
+ *  - row predates the Fase 4 migration (kind/params null)
+ *  - kind value isn't in t.notifs (forward-compat with future kinds)
+ *  - the template throws (malformed params)
+ *
+ * Grouped notifs synthesized in groupNotifications() never carry a kind,
+ * so they always take the legacy path — intentional; localized grouped
+ * aggregation is a separate concern (see commit message follow-up).
+ */
+function resolveDisplay(n: Notif, notifs: Strings["notifs"]): { title: string; body: string } {
+  const kind = n.kind;
+  if (kind && Object.prototype.hasOwnProperty.call(notifs, kind)) {
+    try {
+      const fn = (notifs as Record<string, (p: any) => { title: string; body: string }>)[kind];
+      const out = fn(n.params ?? {});
+      return { title: out.title, body: out.body };
+    } catch {
+      // params shape mismatch — drop through to the legacy columns.
+    }
+  }
+  return { title: n.title, body: n.body ?? "" };
 }
 
 const groupNotifications = (notifs: Notif[]): Notif[] => {
@@ -159,6 +188,7 @@ export default function Notifications() {
             {grouped.map((n, i) => {
               const typeConfig = TYPE_ICONS[n.type] || DEFAULT_ICON;
               const Icon = typeConfig.icon;
+              const { title, body } = resolveDisplay(n, t.notifs);
               return (
                 <motion.button
                   key={n.id}
@@ -176,8 +206,8 @@ export default function Notifications() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-body ${!n.read ? "font-semibold text-foreground" : "text-foreground"}`}>{n.title}</p>
-                    {n.body && <p className="text-xs font-body text-muted-foreground mt-0.5 line-clamp-2">{n.body}</p>}
+                    <p className={`text-sm font-body ${!n.read ? "font-semibold text-foreground" : "text-foreground"}`}>{title}</p>
+                    {body && <p className="text-xs font-body text-muted-foreground mt-0.5 line-clamp-2">{body}</p>}
                     <p className="text-[10px] font-body text-muted-foreground mt-1">{timeAgo(n.created_at)}</p>
                   </div>
                   {!n.read && <div className="w-2.5 h-2.5 rounded-full bg-primary mt-2 flex-shrink-0" />}

@@ -1144,7 +1144,7 @@ export type Database = {
       }
       check_availability_expiration: { Args: never; Returns: undefined }
       get_profiles_within_radius: {
-        Args: { radius_miles: number; user_lat: number; user_lng: number }
+        Args: { radius_km: number; user_lat: number; user_lng: number }
         Returns: {
           distance: number
           id: string

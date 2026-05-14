@@ -81,6 +81,28 @@ export interface Strings {
     passwordsDontMatch: string;
     nameRequired: string;
     maxFileSize: (mb: number) => string;
+    invalidInstagram: string;
+  };
+
+  // ── Style taxonomy (brand-aware display labels) ──────────────────────
+  styles: {
+    runway: string;
+    commercial: string;
+    fitness: string;
+    maternity: string;
+    kids: string;
+    sensual: string;
+    fashion: string;
+    lifestyle: string;
+    editorial: string;
+    beauty: string;
+    wedding: string;
+    food: string;
+    product: string;
+    event: string;
+    sports: string;
+    newborn: string;
+    graduation: string;
   };
 
   // ── Profile completion checklist ─────────────────────────────────────
@@ -175,8 +197,25 @@ export interface Strings {
       location: string;
       instagram: string;
       portfolio: string;
+      styles: string;
     };
     genericError: string;
+    /** Headers/labels for the (currently dead) StepAvailability — kept
+     *  so the file stays i18n-clean if it's reinstated. */
+    stepAvailability: {
+      title: string;
+      daysHelp: string;
+      timesLabel: string;
+      travelQuestion: string;
+    };
+    /** Fields used by the city/UF selector and the autocomplete UX. */
+    cityFieldLabel: string;
+    stateFieldLabel: string;
+    cityPlaceholder: string;
+    cityLoading: string;
+    cityNoneFound: string;
+    instagramOptional: string;
+    instagramHelp: string;
   };
 
   // ── Castings list page (extends t.castings) ──────────────────────────
@@ -792,6 +831,26 @@ export const EN: Strings = {
     passwordsDontMatch: "Passwords don't match",
     nameRequired: "Please enter your name",
     maxFileSize: (mb) => `Max ${mb}MB`,
+    invalidInstagram: "Invalid Instagram handle",
+  },
+  styles: {
+    runway: "Runway",
+    commercial: "Commercial",
+    fitness: "Fitness",
+    maternity: "Maternity",
+    kids: "Kids",
+    sensual: "Sensual",
+    fashion: "Fashion",
+    lifestyle: "Lifestyle",
+    editorial: "Editorial",
+    beauty: "Beauty",
+    wedding: "Wedding",
+    food: "Food",
+    product: "Product",
+    event: "Event",
+    sports: "Sports",
+    newborn: "Newborn",
+    graduation: "Graduation",
   },
   profileCompletion: {
     title: "Profile Completion",
@@ -871,8 +930,22 @@ export const EN: Strings = {
       location: "Location",
       instagram: "Instagram",
       portfolio: "At least 1 portfolio photo",
+      styles: "Styles",
     },
     genericError: "Something went wrong",
+    stepAvailability: {
+      title: "When are you available?",
+      daysHelp: "Select your available days",
+      timesLabel: "Preferred times",
+      travelQuestion: "How far are you willing to travel?",
+    },
+    cityFieldLabel: "City",
+    stateFieldLabel: "State",
+    cityPlaceholder: "Type your city...",
+    cityLoading: "Loading cities...",
+    cityNoneFound: "No city found — type to enter manually",
+    instagramOptional: "Instagram",
+    instagramHelp: "Optional — used to show your work",
   },
   castingsPage: {
     tabOpen: "Open",
@@ -1048,7 +1121,7 @@ export const EN: Strings = {
     seoDescription: "Browse photographers and models near you for TFP collaborations.",
     sortBy: "Sort By",
     distanceAny: "Any",
-    distanceUnit: "mi",
+    distanceUnit: "km",
     availableBadge: "AVAILABLE",
     bothLabel: "Both",
     loadProfilesFailed: "Failed to load profiles",
@@ -1437,6 +1510,26 @@ export const PT_BR: Strings = {
     passwordsDontMatch: "As senhas não batem",
     nameRequired: "Coloca teu nome aí",
     maxFileSize: (mb) => `Limite de ${mb}MB`,
+    invalidInstagram: "Instagram inválido",
+  },
+  styles: {
+    runway: "Passarela",
+    commercial: "Comercial",
+    fitness: "Fitness",
+    maternity: "Gestante",
+    kids: "Infantil",
+    sensual: "Sensual",
+    fashion: "Fashion",
+    lifestyle: "Lifestyle",
+    editorial: "Editorial",
+    beauty: "Beauty",
+    wedding: "Casamento",
+    food: "Gastronomia",
+    product: "Produto",
+    event: "Evento",
+    sports: "Esportivo",
+    newborn: "Recém-nascido",
+    graduation: "Formatura",
   },
   profileCompletion: {
     title: "Falta pouco pra terminar",
@@ -1516,8 +1609,22 @@ export const PT_BR: Strings = {
       location: "Localização",
       instagram: "Instagram",
       portfolio: "Pelo menos 1 foto do book",
+      styles: "Estilos",
     },
     genericError: "Deu ruim",
+    stepAvailability: {
+      title: "Quando tu tá disponível?",
+      daysHelp: "Escolhe os dias que rolam pra ti",
+      timesLabel: "Horários preferidos",
+      travelQuestion: "Até onde tu topa viajar?",
+    },
+    cityFieldLabel: "Cidade",
+    stateFieldLabel: "Estado",
+    cityPlaceholder: "Digita tua cidade...",
+    cityLoading: "Carregando cidades...",
+    cityNoneFound: "Cidade não encontrada — digita manualmente",
+    instagramOptional: "Instagram",
+    instagramHelp: "Opcional — usado pra mostrar teu trabalho",
   },
   castingsPage: {
     tabOpen: "Abertos",
@@ -1693,7 +1800,7 @@ export const PT_BR: Strings = {
     seoDescription: "Explora fotógrafos e modelos perto de ti pra permutas.",
     sortBy: "Ordenar",
     distanceAny: "Qualquer",
-    distanceUnit: "mi",
+    distanceUnit: "km",
     availableBadge: "TÔ NA ATIVA",
     bothLabel: "Os dois",
     loadProfilesFailed: "Não rolou carregar os perfis",
