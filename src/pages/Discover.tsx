@@ -286,7 +286,7 @@ export default function Discover() {
 
       const mapped: ProfileCard[] = filteredData.map((p) => ({
         ...p,
-        cover_url: coverMap[p.id] || p.avatar_url,
+        cover_url: coverMap[p.id] || null,
       }));
 
       if (append) {
