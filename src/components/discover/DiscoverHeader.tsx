@@ -5,7 +5,7 @@
 // Safe-area-aware top padding so the wordmark clears the iOS notch
 // when bundled via Capacitor.
 
-import { Search, Bell, MapPin } from "lucide-react";
+import { Search, Bell, MapPin, SlidersHorizontal } from "lucide-react";
 import { useBrand } from "@/hooks/useBrand";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -16,6 +16,7 @@ interface DiscoverHeaderProps {
   onSearchClick: () => void;
   onNotificationsClick: () => void;
   onCityClick: () => void;
+  onFilterClick: () => void;
 }
 
 export default function DiscoverHeader({
@@ -25,6 +26,7 @@ export default function DiscoverHeader({
   onSearchClick,
   onNotificationsClick,
   onCityClick,
+  onFilterClick,
 }: DiscoverHeaderProps) {
   const brand = useBrand();
   const t = useTranslation();
@@ -53,8 +55,15 @@ export default function DiscoverHeader({
           </button>
         </div>
 
-        {/* Right: search + bell */}
+        {/* Right: filter + search + bell */}
         <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={onFilterClick}
+            aria-label={t.discover.filtersIconAria}
+            className="w-9 h-9 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <SlidersHorizontal className="w-[18px] h-[18px] text-ink-secondary" strokeWidth={2} />
+          </button>
           <button
             onClick={onSearchClick}
             aria-label={t.discover.headerSearchAria}
