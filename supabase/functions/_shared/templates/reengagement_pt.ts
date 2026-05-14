@@ -6,7 +6,7 @@ export interface ReengagementInput {
   firstName: string;
 }
 
-export function build(input: ReengagementInput): { subject: string; html: string; text: string } {
+export function buildReengagementPT(input: ReengagementInput): { subject: string; html: string; text: string } {
   const { brand, firstName } = input;
   const p = paletteFor(brand);
 

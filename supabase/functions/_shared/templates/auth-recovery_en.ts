@@ -7,7 +7,7 @@ export interface AuthRecoveryInput {
   url: string;
 }
 
-export function build(input: AuthRecoveryInput): { subject: string; html: string; text: string } {
+export function buildRecoveryEN(input: AuthRecoveryInput): { subject: string; html: string; text: string } {
   const { brand, email, url } = input;
   const p = paletteFor(brand);
 

@@ -7,7 +7,7 @@ export interface AuthEmailChangeInput {
   url: string;
 }
 
-export function build(input: AuthEmailChangeInput): { subject: string; html: string; text: string } {
+export function buildEmailChangeEN(input: AuthEmailChangeInput): { subject: string; html: string; text: string } {
   const { brand, email, url } = input;
   const p = paletteFor(brand);
 

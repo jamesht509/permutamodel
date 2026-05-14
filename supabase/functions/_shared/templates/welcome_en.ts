@@ -6,7 +6,7 @@ export interface WelcomeInput {
   firstName: string;
 }
 
-export function build(input: WelcomeInput): { subject: string; html: string; text: string } {
+export function buildWelcomeEN(input: WelcomeInput): { subject: string; html: string; text: string } {
   const { brand, firstName } = input;
   const p = paletteFor(brand);
 

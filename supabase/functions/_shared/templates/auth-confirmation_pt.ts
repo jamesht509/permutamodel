@@ -7,7 +7,7 @@ export interface AuthConfirmationInput {
   url: string;
 }
 
-export function build(input: AuthConfirmationInput): { subject: string; html: string; text: string } {
+export function buildConfirmationPT(input: AuthConfirmationInput): { subject: string; html: string; text: string } {
   const { brand, email, url } = input;
   const p = paletteFor(brand);
 

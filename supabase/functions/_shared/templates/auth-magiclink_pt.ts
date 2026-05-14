@@ -7,7 +7,7 @@ export interface AuthMagicLinkInput {
   url: string;
 }
 
-export function build(input: AuthMagicLinkInput): { subject: string; html: string; text: string } {
+export function buildMagicLinkPT(input: AuthMagicLinkInput): { subject: string; html: string; text: string } {
   const { brand, email, url } = input;
   const p = paletteFor(brand);
 
