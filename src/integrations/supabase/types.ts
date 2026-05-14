@@ -124,6 +124,7 @@ export type Database = {
       casting_calls: {
         Row: {
           admin_notes: string | null
+          country: string
           created_at: string | null
           creator_id: string
           description: string
@@ -151,6 +152,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          country?: string
           created_at?: string | null
           creator_id: string
           description: string
@@ -178,6 +180,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          country?: string
           created_at?: string | null
           creator_id?: string
           description?: string
