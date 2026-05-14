@@ -219,7 +219,7 @@ export default function Discover() {
         const { data: nearbyData } = await supabase.rpc('get_profiles_within_radius', {
           user_lat: profile.lat,
           user_lng: profile.lng,
-          radius_miles: maxDistance,
+          radius_km: maxDistance,
         });
         if (nearbyData && nearbyData.length > 0) {
           const nearbyIds = nearbyData.map((p: any) => p.id);

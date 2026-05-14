@@ -28,7 +28,7 @@ export default function SearchPage() {
   const [nameQuery, setNameQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
-  const [radius, setRadius] = useState(25);
+  const [radius, setRadius] = useState(50);
   const [styles, setStyles] = useState<string[]>([]);
   const [minRating, setMinRating] = useState(0);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
@@ -47,11 +47,11 @@ export default function SearchPage() {
 
     // If radius filter is set, get nearby profile IDs first
     let radiusIds: string[] | null = null;
-    if (radius !== 25 && profile?.lat && profile?.lng) {
+    if (radius !== 50 && profile?.lat && profile?.lng) {
       const { data: nearbyData } = await supabase.rpc('get_profiles_within_radius', {
         user_lat: profile.lat,
         user_lng: profile.lng,
-        radius_miles: radius,
+        radius_km: radius,
       });
       radiusIds = nearbyData?.map((p: any) => p.id) || [];
       if (radiusIds.length === 0) {

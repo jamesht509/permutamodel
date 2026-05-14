@@ -78,7 +78,7 @@ export default function EditProfile() {
     setWebsite(profile.website || "");
     setHasStudio(profile.has_studio || false);
     setAvatarUrl(profile.avatar_url || null);
-    setDistanceRadius(profile.distance_radius || 25);
+    setDistanceRadius(profile.distance_radius || 50);
     const avail = (profile.availability as any) || {};
     setAvailDays(avail.days || []);
     setAvailTimes(avail.times || []);
@@ -449,7 +449,7 @@ export default function EditProfile() {
             ))}
           </div>
           <div>
-            <label className="text-xs font-body text-muted-foreground mb-1 block">{t.editProfile.travelRadius(distanceRadius, "mi")}</label>
+            <label className="text-xs font-body text-muted-foreground mb-1 block">{t.editProfile.travelRadius(distanceRadius, "km")}</label>
             <input
               type="range"
               min={5}

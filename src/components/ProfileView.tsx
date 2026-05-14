@@ -810,7 +810,7 @@ export default function ProfileView({ profileId, isOwnProfile }: Props) {
             )}
             {profileData.distance_radius && (
               <p className="text-xs font-body text-muted-foreground mt-2">
-                Willing to travel up to {profileData.distance_radius} mi
+                Willing to travel up to {profileData.distance_radius} km
               </p>
             )}
           </div>

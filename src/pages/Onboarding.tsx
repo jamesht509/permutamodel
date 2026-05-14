@@ -59,7 +59,7 @@ export default function Onboarding() {
     tfpAvailable: true,
     portfolioUrls: [],
     availability: { days: [], times: [] },
-    distance_radius: 25,
+    distance_radius: 50,
   });
 
   const update = useCallback((partial: Partial<OnboardingData>) => {

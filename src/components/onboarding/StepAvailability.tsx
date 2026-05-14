@@ -82,11 +82,11 @@ export default function StepAvailability({ data, update }: Props) {
           How far are you willing to travel?
         </p>
         <div className="flex items-center justify-between mb-3">
-          <span className="font-body text-xs text-muted-foreground">5 mi</span>
+          <span className="font-body text-xs text-muted-foreground">5 km</span>
           <span className="font-heading text-lg font-bold text-primary">
-            {data.distance_radius} mi
+            {data.distance_radius} km
           </span>
-          <span className="font-body text-xs text-muted-foreground">100 mi</span>
+          <span className="font-body text-xs text-muted-foreground">100 km</span>
         </div>
         <Slider
           value={[data.distance_radius]}
