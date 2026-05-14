@@ -100,7 +100,7 @@ export default function ProfileCompletion({ profile, photoCount }: Props) {
 
       <button
         onClick={() => navigate("/profile/edit")}
-        className="w-full mt-3 py-2 rounded-xl bg-primary/10 text-primary text-sm font-body font-medium hover:bg-primary/20 transition-colors"
+        className="w-full mt-3 min-h-[44px] rounded-xl bg-primary/10 text-primary text-sm font-body font-medium hover:bg-primary/20 transition-colors"
       >
         {t.profileCompletion.completeCta}
       </button>

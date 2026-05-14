@@ -833,7 +833,7 @@ function EmptyState({
       <p className="font-body text-sm text-muted-foreground mb-6">{subtitle}</p>
       <button
         onClick={onCta}
-        className="gold-gradient px-5 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+        className="gold-gradient px-5 min-h-[44px] rounded-full font-body text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
       >
         {ctaLabel}
       </button>

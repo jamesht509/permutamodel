@@ -889,16 +889,6 @@ export default function ProfileView({ profileId, isOwnProfile }: Props) {
               </div>
               <span className="text-xs font-body text-muted-foreground">{favCount}</span>
             </button>
-
-            {profileData.plan === "free" && (
-              <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20">
-                <p className="font-heading text-sm font-semibold text-foreground">Free Plan</p>
-                <p className="font-body text-xs text-muted-foreground mt-1">Upgrade for priority visibility, unlimited favorites, and more.</p>
-                <button className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-body font-semibold hover:scale-[1.02] transition-transform">
-                  Upgrade to Premium
-                </button>
-              </div>
-            )}
           </div>
         )}
       </div>

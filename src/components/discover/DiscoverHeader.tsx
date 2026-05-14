@@ -45,7 +45,7 @@ export default function DiscoverHeader({
           </h1>
           <button
             onClick={onCityClick}
-            className="flex items-center gap-1 text-[11px] text-ink-tertiary hover:text-ink-secondary active:scale-95 transition-all min-h-[20px]"
+            className="flex items-center gap-1 text-[11px] text-ink-tertiary hover:text-ink-secondary active:scale-95 transition-all min-h-[44px] -my-2 pr-2"
             aria-label={t.discover.headerCityAria}
           >
             <MapPin className="w-3 h-3 shrink-0" strokeWidth={2} />
@@ -56,25 +56,25 @@ export default function DiscoverHeader({
         </div>
 
         {/* Right: filter + search + bell */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={onFilterClick}
             aria-label={t.discover.filtersIconAria}
-            className="w-9 h-9 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
+            className="w-11 h-11 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
           >
             <SlidersHorizontal className="w-[18px] h-[18px] text-ink-secondary" strokeWidth={2} />
           </button>
           <button
             onClick={onSearchClick}
             aria-label={t.discover.headerSearchAria}
-            className="w-9 h-9 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
+            className="w-11 h-11 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
           >
             <Search className="w-[18px] h-[18px] text-ink-secondary" strokeWidth={2} />
           </button>
           <button
             onClick={onNotificationsClick}
             aria-label={t.discover.headerNotificationsAria}
-            className="relative w-9 h-9 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
+            className="relative w-11 h-11 rounded-full bg-surface flex items-center justify-center active:scale-95 transition-transform"
           >
             <Bell className="w-[18px] h-[18px] text-ink-secondary" strokeWidth={2} />
             {notificationCount > 0 && (
