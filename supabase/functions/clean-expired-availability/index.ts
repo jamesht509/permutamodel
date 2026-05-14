@@ -1,6 +1,15 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  const expected = Deno.env.get("CRON_SECRET");
+  if (!expected) {
+    console.error("CRON_SECRET not configured");
+    return new Response("Misconfigured", { status: 500 });
+  }
+  if (req.headers.get("x-cron-secret") !== expected) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!

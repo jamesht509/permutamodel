@@ -1,10 +1,10 @@
 // send-reengagement
 //
-// Cron-triggered re-engagement email. Service-role authenticated (the
-// cron schedule passes the service role bearer). Finds users inactive
-// 48h+, not banned/seed, not emailed in the last 15 days, and sends the
-// reengagement template in their brand language. Throttled to 180/day
-// to stay under the Brevo free tier.
+// Cron-triggered re-engagement email. Authenticated via the x-cron-secret
+// header (CRON_SECRET env var, mirrored in vault for cron.schedule). Finds
+// users inactive 48h+, not banned/seed, not emailed in the last 15 days,
+// and sends the reengagement template in their brand language. Throttled
+// to 180/day to stay under the Brevo free tier.
 //
 // Brand routing per user via profile.country. profile.lang reserved
 // for the future; currently NULL on all rows.
@@ -19,7 +19,16 @@ const DAILY_LIMIT = 180;
 const INACTIVE_HOURS = 48;
 const COOLDOWN_DAYS = 15;
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  const expected = Deno.env.get("CRON_SECRET");
+  if (!expected) {
+    console.error("CRON_SECRET not configured");
+    return new Response("Misconfigured", { status: 500 });
+  }
+  if (req.headers.get("x-cron-secret") !== expected) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
