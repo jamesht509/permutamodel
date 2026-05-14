@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -33,7 +33,10 @@ const Favorites = lazy(() => import("@/pages/Favorites"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
 const EditProfile = lazy(() => import("@/pages/EditProfile"));
 const SearchPage = lazy(() => import("@/pages/SearchPage"));
-const ProPage = lazy(() => import("@/pages/ProPage"));
+// FASE 6 hide — ProPage hidden for BR launch. Reactivate in Sessão 5+
+// when Stripe monetization is wired up. File kept on disk; route below
+// redirects to /discover so old bookmarks don't 404.
+// const ProPage = lazy(() => import("@/pages/ProPage"));
 const TermsOfService = lazy(() => import("@/pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -123,7 +126,8 @@ const App = () => (
                   <Route path="/favorites" element={<Favorites />} />
                   <Route path="/notifications" element={<Notifications />} />
                   <Route path="/settings" element={<Settings />} />
-                  <Route path="/pro" element={<ProPage />} />
+                  {/* FASE 6: /pro hidden, old links redirect home */}
+                  <Route path="/pro" element={<Navigate to="/discover" replace />} />
                 </Route>
 
                 <Route path="*" element={<NotFound />} />
