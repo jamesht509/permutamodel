@@ -201,7 +201,7 @@ export default function Discover() {
         query = query.or(`city.ilike.%${locationQuery.trim()}%,state.ilike.%${locationQuery.trim()}%`);
       }
 
-      let distanceMap: Record<string, number> = {};
+      const distanceMap: Record<string, number> = {};
       if (maxDistance && profile?.lat && profile?.lng) {
         const { data: nearbyData } = await supabase.rpc("get_profiles_within_radius", {
           user_lat: profile.lat,
@@ -248,7 +248,7 @@ export default function Discover() {
 
       // Fetch cover photos
       const ids = (data || []).map((p) => p.id);
-      let coverMap: Record<string, string> = {};
+      const coverMap: Record<string, string> = {};
 
       if (ids.length > 0) {
         const { data: photos } = await supabase
