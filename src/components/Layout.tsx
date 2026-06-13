@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Search, PlusCircle, MessageCircle, UserIcon, ClipboardList } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import CreateCastingModal from "@/components/castings/CreateCastingModal";
 import BottomNav from "@/components/layout/BottomNav";
 import CreateFAB from "@/components/discover/CreateFAB";
@@ -19,28 +19,7 @@ export default function Layout() {
   const { user } = useAuth();
   const [showCastingModal, setShowCastingModal] = useState(false);
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
-  const [unreadMessages, setUnreadMessages] = useState(0);
-
-  // Fetch unread message count + realtime channel.
-  // Wave 3 polish: filter sender_id=neq.{user.id} server-side, also listen
-  // to UPDATE so the badge clears when read_at flips to a timestamp.
-  useEffect(() => {
-    if (!user) return;
-    const fetchUnread = async () => {
-      const { count } = await supabase
-        .from("messages")
-        .select("*", { count: "exact", head: true })
-        .neq("sender_id", user.id)
-        .is("read_at", null);
-      setUnreadMessages(count || 0);
-    };
-    fetchUnread();
-    const channel = supabase
-      .channel("layout-unread")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, fetchUnread)
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  const unreadMessages = useUnreadMessages();
 
   const navItems = [
     { icon: Search, label: t.nav.discover, path: "/discover" },
