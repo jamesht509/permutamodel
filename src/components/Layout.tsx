@@ -24,7 +24,7 @@ export default function Layout() {
   const navItems = [
     { icon: Search, label: t.nav.discover, path: "/discover" },
     { icon: ClipboardList, label: t.nav.dashboard, path: "/dashboard" },
-    { icon: PlusCircle, label: t.common.done === "Pronto" ? "Criar" : "Create", path: "#create" },
+    { icon: PlusCircle, label: t.create.fabAria, path: "#create" },
     { icon: MessageCircle, label: t.nav.messages, path: "/messages" },
     { icon: UserIcon, label: t.nav.profile, path: "/profile" },
   ];
