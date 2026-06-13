@@ -374,6 +374,14 @@ export interface Strings {
     letsGo: string;
     skip: string;
     finish: string;
+    roleStepTitle: string;
+    /** Per-role one-liner shown under each role card on StepRole. */
+    roleDesc: {
+      photographer: string;
+      model: string;
+      creative: string;
+      dual: string;
+    };
   };
 
   // ── Discover (Início) ────────────────────────────────────────────────
@@ -1130,6 +1138,13 @@ export const EN: Strings = {
     letsGo: "Let's Go",
     skip: "Skip",
     finish: "Finish",
+    roleStepTitle: "I am a...",
+    roleDesc: {
+      photographer: "I shoot photos",
+      model: "I pose for photos",
+      creative: "MUA, stylist, etc.",
+      dual: "Photographer & model",
+    },
   },
   discover: {
     title: "Discover",
@@ -1856,6 +1871,13 @@ export const PT_BR: Strings = {
     letsGo: "Bora",
     skip: "Pular",
     finish: "Finalizar",
+    roleStepTitle: "Tu é...",
+    roleDesc: {
+      photographer: "Tiro fotos",
+      model: "Modelo, gosto de posar",
+      creative: "Maquiagem, styling, etc.",
+      dual: "Fotógrafo & modelo",
+    },
   },
   discover: {
     title: "Início",

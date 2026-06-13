@@ -1,10 +1,13 @@
 import type { OnboardingData } from "@/pages/Onboarding";
+import { useTranslation } from "@/hooks/useTranslation";
 
-const roles = [
-  { value: "photographer", emoji: "📸", label: "Photographer", desc: "I shoot photos" },
-  { value: "model", emoji: "🌟", label: "Model", desc: "I pose for photos" },
-  { value: "creative", emoji: "🎨", label: "Creative", desc: "MUA, Stylist, etc." },
-  { value: "dual", emoji: "📸🌟", label: "Both", desc: "Photographer & Model" },
+type RoleKey = "photographer" | "model" | "creative" | "dual";
+
+const ROLE_OPTIONS: { value: RoleKey; emoji: string }[] = [
+  { value: "photographer", emoji: "📸" },
+  { value: "model", emoji: "🌟" },
+  { value: "creative", emoji: "🎨" },
+  { value: "dual", emoji: "📸🌟" },
 ];
 
 interface Props {
@@ -13,11 +16,13 @@ interface Props {
 }
 
 export default function StepRole({ data, update }: Props) {
+  const t = useTranslation();
+
   return (
     <div className="max-w-md mx-auto">
-      <h2 className="font-heading text-2xl font-bold text-foreground mb-6">I am a...</h2>
+      <h2 className="font-heading text-2xl font-bold text-foreground mb-6">{t.onboarding.roleStepTitle}</h2>
       <div className="grid grid-cols-2 gap-3">
-        {roles.map((r) => {
+        {ROLE_OPTIONS.map((r) => {
           const selected = data.role === r.value;
           return (
             <button
@@ -30,8 +35,8 @@ export default function StepRole({ data, update }: Props) {
               }`}
             >
               <span className="text-3xl block mb-2">{r.emoji}</span>
-              <p className="font-heading font-semibold text-foreground text-sm">{r.label}</p>
-              <p className="font-body text-xs text-muted-foreground mt-1">{r.desc}</p>
+              <p className="font-heading font-semibold text-foreground text-sm">{t.roles[r.value]}</p>
+              <p className="font-body text-xs text-muted-foreground mt-1">{t.onboarding.roleDesc[r.value]}</p>
             </button>
           );
         })}

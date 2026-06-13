@@ -70,11 +70,12 @@ const LEVEL_MAP: Record<string, { icon: string; label: string }> = {
   legend: { icon: "✦", label: "Legend" },
 };
 
-const ROLE_MAP: Record<string, { icon: string; label: string }> = {
-  photographer: { icon: "◎", label: "Photographer" },
-  model: { icon: "◇", label: "Model" },
-  creative: { icon: "△", label: "Creative" },
-  dual: { icon: "◎◇", label: "Photographer & Model" },
+// Visual glyph per role. Display label comes from t.roles.* (i18n).
+const ROLE_ICON: Record<string, string> = {
+  photographer: "◎",
+  model: "◇",
+  creative: "△",
+  dual: "◎◇",
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -301,7 +302,8 @@ export default function ProfileView({ profileId, isOwnProfile }: Props) {
     );
   }
 
-  const role = ROLE_MAP[profileData.role] || ROLE_MAP.photographer;
+  const roleKey = (profileData.role in ROLE_ICON ? profileData.role : "photographer") as keyof typeof t.roles;
+  const role = { icon: ROLE_ICON[roleKey], label: t.roles[roleKey] };
   const level = LEVEL_MAP[profileData.user_level] || LEVEL_MAP.newcomer;
   const joinDate = profileData.created_at
     ? new Date(profileData.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })
