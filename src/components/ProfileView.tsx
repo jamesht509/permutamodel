@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Share2, MoreVertical, Heart, Star, MapPin, Calendar, Camera, Sparkles, Shield, Crown, Gem, Rocket, Zap, ChevronLeft, ChevronRight, Settings, Users, Bookmark, ArrowUpRight, Instagram, MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -87,6 +87,7 @@ interface Props {
 export default function ProfileView({ profileId, isOwnProfile }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isDesktop } = useDevice();
   const t = useTranslation();
 
@@ -198,6 +199,24 @@ export default function ProfileView({ profileId, isOwnProfile }: Props) {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
+
+  // Auto-open the TFP request modal when arriving via ?tfp=1 (the Discover
+  // feed "Chamar pra permuta" CTA links here with that param). Only fires
+  // once the profile is loaded and it isn't the viewer's own profile; the
+  // param is stripped so a refresh / back-nav doesn't re-trigger it.
+  useEffect(() => {
+    if (searchParams.get("tfp") !== "1") return;
+    if (isOwnProfile || !profileData) return;
+    setShowTfpModal(true);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("tfp");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [searchParams, isOwnProfile, profileData, setSearchParams]);
 
   // Refetch when window regains focus (e.g. after editing profile)
   useEffect(() => {
