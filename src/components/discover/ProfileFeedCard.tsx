@@ -7,7 +7,6 @@
 
 import { useMemo } from "react";
 import { Star, Camera, Zap, MapPin, Heart } from "lucide-react";
-import { useBrand } from "@/hooks/useBrand";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export interface ProfileFeedCardData {
@@ -41,31 +40,16 @@ interface ProfileFeedCardProps {
 
 const MAX_CHIPS = 3;
 
-function roleLabel(role: string, isPT: boolean): string | null {
-  if (isPT) {
-    if (role === "photographer") return "Fotógrafo";
-    if (role === "model") return "Modelo";
-    if (role === "dual") return "Fotógrafo & modelo";
-    return null;
-  }
-  if (role === "photographer") return "Photographer";
-  if (role === "model") return "Model";
-  if (role === "dual") return "Photographer & model";
-  return null;
-}
-
 function hoursUntil(iso: string): number {
   const diff = new Date(iso).getTime() - Date.now();
   return Math.max(0, Math.round(diff / 3_600_000));
 }
 
 export default function ProfileFeedCard({ profile, distance, isFavorite, onTap, onTapPermuta, onToggleFavorite }: ProfileFeedCardProps) {
-  const brand = useBrand();
   const t = useTranslation();
-  const isPT = brand.lang === "pt-BR";
 
   const heroImg = profile.cover_url || profile.avatar_url;
-  const role = roleLabel(profile.role, isPT);
+  const role = t.roles[profile.role as keyof typeof t.roles] ?? null;
 
   const activeHoursLeft = useMemo(() => {
     if (!profile.available_until) return null;

@@ -477,6 +477,14 @@ export interface Strings {
     anyRating: string;
   };
 
+  /** Role display labels (matches user_role enum: photographer/model/creative/dual). */
+  roles: {
+    photographer: string;
+    model: string;
+    creative: string;
+    dual: string;
+  };
+
   // ── Dashboard ────────────────────────────────────────────────────────
   dashboard: {
     title: string;
@@ -1214,6 +1222,12 @@ export const EN: Strings = {
     anyDistance: "Any distance",
     anyRating: "Any rating",
   },
+  roles: {
+    photographer: "Photographer",
+    model: "Model",
+    creative: "Creative",
+    dual: "Photographer & model",
+  },
   dashboard: {
     title: "Dashboard",
     received: "Received",
@@ -1933,6 +1947,12 @@ export const PT_BR: Strings = {
     rating: "Avaliação mínima",
     anyDistance: "Qualquer distância",
     anyRating: "Qualquer avaliação",
+  },
+  roles: {
+    photographer: "Fotógrafo",
+    model: "Modelo",
+    creative: "Criativo",
+    dual: "Fotógrafo & modelo",
   },
   dashboard: {
     title: "Painel",
