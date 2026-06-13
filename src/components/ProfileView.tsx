@@ -913,7 +913,7 @@ export default function ProfileView({ profileId, isOwnProfile }: Props) {
       </div>
 
       {/* Fixed Bottom Action Bar — sits above mobile nav */}
-      <div className="fixed bottom-[4.5rem] md:bottom-0 left-0 right-0 md:left-20 lg:left-64 bg-background/95 backdrop-blur-xl border-t border-border p-3 md:p-4 z-30 safe-area-pb">
+      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 lg:left-64 bg-background/95 backdrop-blur-xl border-t border-border p-3 md:p-4 z-30 safe-area-pb">
         {isOwnProfile ? (
           <button onClick={() => navigate("/profile/edit")}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-body font-semibold text-base hover:scale-[1.01] active:scale-[0.99] transition-transform">

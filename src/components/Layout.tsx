@@ -40,9 +40,11 @@ export default function Layout() {
   const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <div className="min-h-[100dvh] bg-background flex flex-col md:flex-row">
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-20 lg:w-64 fixed left-0 top-0 h-full bg-background/95 backdrop-blur-xl border-r border-border z-40" role="navigation" aria-label="Sidebar navigation">
+    <div className="min-h-[100dvh] bg-background flex flex-col lg:flex-row">
+      {/* Desktop sidebar — lg+ only. Below lg the app is the mobile
+          experience (BottomNav + FAB); the old md breakpoint let the
+          sidebar and BottomNav both show on tablets. */}
+      <aside className="hidden lg:flex flex-col w-64 fixed left-0 top-0 h-full bg-background/95 backdrop-blur-xl border-r border-border z-40" role="navigation" aria-label="Sidebar navigation">
         <div className="p-4 lg:p-6">
           <h1 className="font-heading text-xl font-bold text-foreground hidden lg:block">{brand.name}</h1>
           <span className="font-heading text-xl font-bold text-primary block lg:hidden text-center">{brand.name.replace(/[a-z]/g, "").slice(0, 2)}</span>
@@ -93,8 +95,8 @@ export default function Layout() {
 
       {/* Main Content — opacity-only transition (no transform — Safari iOS
           breaks fixed children with transform parent). */}
-      <main className="flex-1 md:ml-20 lg:ml-64 pb-20 lg:pb-0 md:flex md:justify-center" role="main">
-        <div className="w-full md:max-w-7xl md:px-6 lg:px-8">
+      <main className="flex-1 lg:ml-64 pb-20 lg:pb-0 lg:flex lg:justify-center" role="main">
+        <div className="w-full lg:max-w-7xl lg:px-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

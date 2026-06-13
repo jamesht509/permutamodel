@@ -356,7 +356,7 @@ export default function SearchPage() {
       </div>
 
       {/* Fixed bottom */}
-      <div className="fixed bottom-[4.5rem] md:bottom-0 left-0 right-0 md:left-20 lg:left-64 bg-background/95 backdrop-blur-xl border-t border-border p-4 z-30 safe-area-pb">
+      <div className="fixed bottom-[4.5rem] lg:bottom-0 left-0 right-0 lg:left-64 bg-background/95 backdrop-blur-xl border-t border-border p-4 z-30 safe-area-pb">
         <p className="text-center text-xs font-body text-muted-foreground mb-2">
           {counting ? t.searchPage.counting : matchCount !== null ? `${matchCount} ${matchCount !== 1 ? t.searchPage.matches : t.searchPage.match}` : ""}
         </p>
