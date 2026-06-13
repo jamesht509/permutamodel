@@ -626,6 +626,8 @@ export interface Strings {
     title: string;
     noFavorites: string;
     noFavoritesSub: string;
+    add: string;
+    remove: string;
   };
 
   // ── Notifications page (static UI) ──────────────────────────────────
@@ -1328,6 +1330,8 @@ export const EN: Strings = {
     title: "Favorites",
     noFavorites: "No favorites yet",
     noFavoritesSub: "Heart profiles you like and they'll appear here.",
+    add: "Add to favorites",
+    remove: "Remove from favorites",
   },
   notifications: {
     title: "Notifications",
@@ -2046,6 +2050,8 @@ export const PT_BR: Strings = {
     title: "Salvos",
     noFavorites: "Nada salvo ainda",
     noFavoritesSub: "Salva os perfis que curtir e eles aparecem aqui.",
+    add: "Adicionar aos favoritos",
+    remove: "Tirar dos favoritos",
   },
   notifications: {
     title: "Avisos",

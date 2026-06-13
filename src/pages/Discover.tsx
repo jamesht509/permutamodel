@@ -114,6 +114,7 @@ export default function Discover() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [availableNow, setAvailableNow] = useState<AvailableNowProfile[]>([]);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   const loaderRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<NodeJS.Timeout>();
@@ -143,6 +144,15 @@ export default function Discover() {
 
   useEffect(() => {
     if (!user) return;
+
+    // Load the viewer's favorites so cards render the filled-heart state.
+    supabase
+      .from("favorites")
+      .select("favorited_user_id")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (data) setFavorites(new Set(data.map((f) => f.favorited_user_id)));
+      });
 
     // Load available now (minimal fields for AvailableNowStories)
     (supabase
@@ -351,6 +361,25 @@ export default function Discover() {
       ? calculateDistance(profile.lat, profile.lng, p.lat, p.lng)
       : null;
 
+  // Optimistic favorite toggle. Mirrors the favorites table pattern used in
+  // ProfileView; reverts the local set is intentionally skipped — a failed
+  // write is rare and the next mount reloads the source of truth.
+  const toggleFavorite = async (id: string) => {
+    if (!user) return;
+    const isFav = favorites.has(id);
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (isFav) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+    if (isFav) {
+      await supabase.from("favorites").delete().eq("user_id", user.id).eq("favorited_user_id", id);
+    } else {
+      await supabase.from("favorites").insert({ user_id: user.id, favorited_user_id: id });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead title={t.discover.seoTitle(brand.name)} description={t.discover.seoDescription} />
@@ -389,8 +418,10 @@ export default function Discover() {
                   key={p.id}
                   profile={p}
                   distance={distFor(p)}
+                  isFavorite={favorites.has(p.id)}
                   onTap={(id) => navigate(`/profile/${id}`)}
                   onTapPermuta={(id) => navigate(`/profile/${id}?tfp=1`)}
+                  onToggleFavorite={toggleFavorite}
                 />
               ))}
               {loadingMore && <SkeletonFeedList count={2} />}
@@ -750,8 +781,10 @@ export default function Discover() {
                         key={p.id}
                         profile={p}
                         distance={distFor(p)}
+                        isFavorite={favorites.has(p.id)}
                         onTap={(id) => navigate(`/profile/${id}`)}
                         onTapPermuta={(id) => navigate(`/profile/${id}?tfp=1`)}
+                        onToggleFavorite={toggleFavorite}
                       />
                     ))}
                   </div>

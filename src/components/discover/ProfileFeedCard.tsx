@@ -6,7 +6,7 @@
 // fields (total_sessions, age) render their row only when present.
 
 import { useMemo } from "react";
-import { Star, Camera, Zap, MapPin } from "lucide-react";
+import { Star, Camera, Zap, MapPin, Heart } from "lucide-react";
 import { useBrand } from "@/hooks/useBrand";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -30,10 +30,13 @@ export interface ProfileFeedCardData {
 
 interface ProfileFeedCardProps {
   profile: ProfileFeedCardData;
-  /** Distance in km, already calculated by the parent (haversine). Null hides the chip. */
+  /** Distance in km, already calculated by the parent (haversine). Null hides it. */
   distance: number | null;
+  /** Whether the viewer has favorited this profile. */
+  isFavorite: boolean;
   onTap: (id: string) => void;
   onTapPermuta: (id: string) => void;
+  onToggleFavorite: (id: string) => void;
 }
 
 const MAX_CHIPS = 3;
@@ -56,7 +59,7 @@ function hoursUntil(iso: string): number {
   return Math.max(0, Math.round(diff / 3_600_000));
 }
 
-export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta }: ProfileFeedCardProps) {
+export default function ProfileFeedCard({ profile, distance, isFavorite, onTap, onTapPermuta, onToggleFavorite }: ProfileFeedCardProps) {
   const brand = useBrand();
   const t = useTranslation();
   const isPT = brand.lang === "pt-BR";
@@ -76,14 +79,16 @@ export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta
   const subtitleParts = [
     profile.city,
     role,
+    distance !== null ? t.discover.distanceKm(Math.round(distance)) : null,
   ].filter((x): x is string => Boolean(x));
 
   return (
     <article
-      className="mx-3.5 mb-3.5 lg:mx-0 bg-surface rounded-2xl overflow-hidden"
+      className="relative mx-3.5 mb-3.5 lg:mx-0 bg-surface rounded-2xl overflow-hidden"
       aria-label={profile.name}
     >
-      {/* Hero */}
+      {/* Hero (tap → profile). Favorite button is a sibling below so we
+          don't nest interactive elements inside this button. */}
       <button
         onClick={() => onTap(profile.id)}
         className="relative w-full block aspect-[5/4] bg-elevated active:scale-[0.99] transition-transform"
@@ -108,23 +113,30 @@ export default function ProfileFeedCard({ profile, distance, onTap, onTapPermuta
           </span>
         )}
 
-        {/* Badge: distance */}
-        {distance !== null && (
-          <span className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-1 rounded-lg bg-background/70 text-ink text-[11px] font-medium">
-            <MapPin className="w-3 h-3" strokeWidth={2.2} />
-            {t.discover.distanceKm(Math.round(distance))}
-          </span>
-        )}
-
-        {/* Overlay — nameplate */}
+        {/* Overlay — nameplate (distance folds into the subtitle line) */}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/[0.92] via-background/40 to-transparent px-3.5 pt-12 pb-3.5 text-left">
           <p className="text-base font-medium text-ink leading-tight">{profile.name}</p>
           {subtitleParts.length > 0 && (
-            <p className="text-xs text-ink/70 mt-0.5 leading-tight">
-              {subtitleParts.join(" · ")}
+            <p className="flex items-center gap-1 text-xs text-ink/70 mt-0.5 leading-tight">
+              {distance !== null && <MapPin className="w-3 h-3 shrink-0" strokeWidth={2.2} />}
+              <span className="truncate">{subtitleParts.join(" · ")}</span>
             </p>
           )}
         </div>
+      </button>
+
+      {/* Favorite toggle — sibling of the hero button, sits over its top-right
+          corner. Separate element so taps here never fall through to the hero. */}
+      <button
+        onClick={() => onToggleFavorite(profile.id)}
+        aria-label={isFavorite ? t.favorites.remove : t.favorites.add}
+        aria-pressed={isFavorite}
+        className="absolute top-2 right-2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-background/50 backdrop-blur-sm active:scale-90 transition-transform"
+      >
+        <Heart
+          className={`w-5 h-5 transition-colors ${isFavorite ? "text-coral fill-coral" : "text-ink/70"}`}
+          strokeWidth={2}
+        />
       </button>
 
       {/* Body */}
